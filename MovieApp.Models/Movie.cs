@@ -25,7 +25,7 @@ namespace MovieApp.Models
         public double Rating { get; set; }//Rating score
 
         [Required]
-        [Display(Name = "List Price")]
+        [Display(Name = "List Price")] //List Price
         [Range(1, 1000)]
         public double ListPrice { get; set; }
 
