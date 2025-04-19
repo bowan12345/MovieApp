@@ -1,5 +1,5 @@
-﻿using Bulky.DataAccess.Repository.IRepository;
-using BulkyWeb.Data;
+﻿using MovieApp.DataAccess.Data;
+using MovieApp.DataAccess.Repository.IRepository;
 using MovieApp.Models;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bulky.DataAccess.Repository
+namespace MovieApp.DataAccess.Repository
 {
     public class MovieRepository : Repository<Movie>, IMovieRepository
     {

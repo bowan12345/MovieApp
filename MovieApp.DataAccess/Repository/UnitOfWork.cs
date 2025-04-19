@@ -1,12 +1,12 @@
-﻿using Bulky.DataAccess.Repository.IRepository;
-using BulkyWeb.Data;
+﻿using MovieApp.DataAccess.Data;
+using MovieApp.DataAccess.Repository.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bulky.DataAccess.Repository
+namespace MovieApp.DataAccess.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {

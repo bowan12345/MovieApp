@@ -1,8 +1,8 @@
-﻿using Bulky.DataAccess.Repository.IRepository;
-using BulkyWeb.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MovieApp.DataAccess.Data;
+using MovieApp.DataAccess.Repository.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bulky.DataAccess.Repository
+namespace MovieApp.DataAccess.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {

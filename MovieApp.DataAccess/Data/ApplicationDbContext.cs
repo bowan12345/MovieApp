@@ -1,11 +1,12 @@
 ﻿
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using MovieApp.Models;
 
-namespace BulkyWeb.Data
+namespace MovieApp.DataAccess.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -14,8 +15,13 @@ namespace BulkyWeb.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Movie> Movies { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) 
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "Action", DisplayOrder = 1, Description = "Movies with high energy, physical stunts, and intense scenes." },
                 new Category { Id = 2, Name = "Comedy", DisplayOrder = 2, Description = "Movies designed to make the audience laugh." },
