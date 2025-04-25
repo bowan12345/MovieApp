@@ -28,8 +28,4 @@
     <ProjectReference Include="..\MovieApp.Utility\MovieApp.Utility.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\" />
-  </ItemGroup>
-
 </Project>

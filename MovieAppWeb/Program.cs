@@ -33,6 +33,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // add email services
 builder.Services.AddScoped<IEmailSender, Emailsender>();
+// add QR code services
+builder.Services.AddScoped<QrCodeUtil>();
+
 
 var app = builder.Build();
 
