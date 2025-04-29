@@ -1,7 +1,7 @@
 ﻿@model List<Movie>
 
 <div class=" card shadow border-0 mt-4">
-    <div class=" card-header bg-secondary bg-gradient ml-0 py-3">
+    <div class=" card-header bg-dark bg-gradient ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
                 <h2 class="text-white py-2"> Movie List </h2>
@@ -15,8 +15,8 @@
             </div>
 
             <div class="col-6 text-end">
-            <a asp-controller="Product" asp-action="Upsert" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Add New Movie
+            <a asp-controller="Movie" asp-action="Upsert" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create New Movie
             </a>
         </div>
     </div>
@@ -24,7 +24,7 @@
 <table id="tblData" class="table table-bordered table-striped">
     <thead>
         <tr>
-            <th>Title</th>
+            <th>Name</th>
             <th>Director</th>
             <th>Duration</th>
             <th>Rating</th>

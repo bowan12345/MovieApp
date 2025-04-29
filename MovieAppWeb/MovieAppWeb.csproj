@@ -28,4 +28,8 @@
     <ProjectReference Include="..\MovieApp.Utility\MovieApp.Utility.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\movie\" />
+  </ItemGroup>
+
 </Project>

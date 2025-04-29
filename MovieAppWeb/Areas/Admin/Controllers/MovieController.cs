@@ -69,7 +69,7 @@ namespace MovieAppWeb.Areas.Admin.Controllers
                 if (file != null)
                 {
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string productPath = Path.Combine(wwwRootPath, @"images\product");//C:\\document\\CSharp\\Bulky\\BulkyWeb\\wwwroot\\images\\product"
+                    string productPath = Path.Combine(wwwRootPath, @"images\movie");
 
                     //check imageUrl is null or not
                     if (!string.IsNullOrEmpty(_Movie.Movie.ImageUrl))
@@ -86,7 +86,7 @@ namespace MovieAppWeb.Areas.Admin.Controllers
                     {
                         file.CopyTo(fileStream);
                     }
-                    _Movie.Movie.ImageUrl = @"\images\product\" + fileName;
+                    _Movie.Movie.ImageUrl = @"\images\movie\" + fileName;
                 }
 
                 if (_Movie.Movie.Id == 0)
@@ -123,7 +123,7 @@ namespace MovieAppWeb.Areas.Admin.Controllers
                 return Json(new { success = false, message = "Product not found" });
             }
             //delete old image
-            string oldImage = Path.Combine(_webHostEnvironment.WebRootPath, movie.ImageUrl.Trim('\\'));
+            string oldImage = Path.Combine(_webHostEnvironment.WebRootPath, string.IsNullOrEmpty(movie.ImageUrl)?"": movie.ImageUrl.Trim('\\'));
             if (System.IO.File.Exists(oldImage))
             {
                 System.IO.File.Delete(oldImage);
