@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace MovieApp.Models
 {
@@ -17,6 +18,6 @@ namespace MovieApp.Models
         [DisplayName("Display Order")]
         public int DisplayOrder { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 }

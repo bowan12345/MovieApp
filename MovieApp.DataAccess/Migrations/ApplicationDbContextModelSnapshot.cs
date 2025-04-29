@@ -238,7 +238,6 @@ namespace MovieApp.DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DisplayOrder")
@@ -296,7 +295,6 @@ namespace MovieApp.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Director")
@@ -307,26 +305,28 @@ namespace MovieApp.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("ListPrice")
                         .HasColumnType("float");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<double>("Price100")
+                    b.Property<double>("Price10")
                         .HasColumnType("float");
 
-                    b.Property<double>("Price50")
+                    b.Property<double>("Price5")
                         .HasColumnType("float");
 
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
+                    b.Property<string>("YoutubeId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -345,11 +345,12 @@ namespace MovieApp.DataAccess.Migrations
                             Duration = 130,
                             ImageUrl = "",
                             ListPrice = 29.989999999999998,
+                            Name = "The Great Adventure",
                             Price = 24.989999999999998,
-                            Price100 = 19.989999999999998,
-                            Price50 = 22.989999999999998,
+                            Price10 = 19.989999999999998,
+                            Price5 = 22.989999999999998,
                             Rating = 8.1999999999999993,
-                            Title = "The Great Adventure"
+                            YoutubeId = ""
                         },
                         new
                         {
@@ -360,11 +361,12 @@ namespace MovieApp.DataAccess.Migrations
                             Duration = 115,
                             ImageUrl = "",
                             ListPrice = 24.989999999999998,
+                            Name = "Love in Paris",
                             Price = 19.989999999999998,
-                            Price100 = 15.99,
-                            Price50 = 17.989999999999998,
+                            Price10 = 15.99,
+                            Price5 = 17.989999999999998,
                             Rating = 7.5,
-                            Title = "Love in Paris"
+                            YoutubeId = ""
                         },
                         new
                         {
@@ -375,11 +377,12 @@ namespace MovieApp.DataAccess.Migrations
                             Duration = 98,
                             ImageUrl = "",
                             ListPrice = 19.989999999999998,
+                            Name = "The Laugh Factory",
                             Price = 15.99,
-                            Price100 = 11.99,
-                            Price50 = 13.99,
+                            Price10 = 11.99,
+                            Price5 = 13.99,
                             Rating = 7.7999999999999998,
-                            Title = "The Laugh Factory"
+                            YoutubeId = ""
                         },
                         new
                         {
@@ -390,11 +393,12 @@ namespace MovieApp.DataAccess.Migrations
                             Duration = 145,
                             ImageUrl = "",
                             ListPrice = 34.990000000000002,
+                            Name = "Beyond the Stars",
                             Price = 28.989999999999998,
-                            Price100 = 23.989999999999998,
-                            Price50 = 26.989999999999998,
+                            Price10 = 23.989999999999998,
+                            Price5 = 26.989999999999998,
                             Rating = 8.5999999999999996,
-                            Title = "Beyond the Stars"
+                            YoutubeId = ""
                         },
                         new
                         {
@@ -405,11 +409,12 @@ namespace MovieApp.DataAccess.Migrations
                             Duration = 105,
                             ImageUrl = "",
                             ListPrice = 22.989999999999998,
+                            Name = "Haunted Echoes",
                             Price = 18.989999999999998,
-                            Price100 = 14.99,
-                            Price50 = 16.989999999999998,
+                            Price10 = 14.99,
+                            Price5 = 16.989999999999998,
                             Rating = 6.9000000000000004,
-                            Title = "Haunted Echoes"
+                            YoutubeId = ""
                         });
                 });
 
