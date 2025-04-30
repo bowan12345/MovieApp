@@ -35,6 +35,7 @@ namespace MovieApp.DataAccess.Data
                   {
                       Id = 1,
                       Name = "The Great Adventure",
+                      ReleaseYear = 2001,
                       Director = "John Smith",
                       Description = "A thrilling journey through uncharted lands.",
                       Duration = 130,
@@ -51,6 +52,7 @@ namespace MovieApp.DataAccess.Data
                     {
                         Id = 2,
                         Name = "Love in Paris",
+                        ReleaseYear = 2011,
                         Director = "Emily Johnson",
                         Description = "A heartfelt romantic story set in Paris.",
                         Duration = 115,
@@ -67,6 +69,7 @@ namespace MovieApp.DataAccess.Data
                     {
                         Id = 3,
                         Name = "The Laugh Factory",
+                        ReleaseYear = 2004,
                         Director = "Mike Chang",
                         Description = "Comedy that will leave you in stitches.",
                         Duration = 98,
@@ -83,6 +86,7 @@ namespace MovieApp.DataAccess.Data
                     {
                         Id = 4,
                         Name = "Beyond the Stars",
+                        ReleaseYear = 2015,
                         Director = "Samantha Lee",
                         Description = "A science fiction epic exploring distant galaxies.",
                         Duration = 145,
@@ -99,6 +103,7 @@ namespace MovieApp.DataAccess.Data
                     {
                         Id = 5,
                         Name = "Haunted Echoes",
+                        ReleaseYear = 2022,
                         Director = "Richard Black",
                         Description = "A chilling horror story that will keep you up at night.",
                         Duration = 105,

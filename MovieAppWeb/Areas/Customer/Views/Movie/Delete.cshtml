@@ -1,0 +1,36 @@
+﻿@model MovieApp.Models.Movie
+
+@{
+    ViewData["Title"] = "Delete Movie";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form method="post" asp-action="Delete">
+    <input asp-for="Id" hidden />
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary">Delete Movie</h2>
+            <hr />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Title</label>
+            <input asp-for="Name" disabled class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">Description</label>
+            <textarea asp-for="Description" disabled class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ReleaseYear" class="form-label">Release Year</label>
+            <input asp-for="ReleaseYear" disabled class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Director" class="form-label">Director</label>
+            <input asp-for="Director" disabled class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-danger" style="width:150px">Delete</button>
+        <a asp-controller="Movie" asp-action="Index" class="btn btn-secondary" style="width:150px">
+            Back to List
+        </a>
+    </div>
+</form>

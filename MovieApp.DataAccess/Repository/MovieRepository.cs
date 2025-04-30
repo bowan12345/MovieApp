@@ -29,6 +29,7 @@ namespace MovieApp.DataAccess.Repository
             if (moviefromDb != null)
             {
                 moviefromDb.Name = movie.Name;
+                moviefromDb.ReleaseYear = movie.ReleaseYear;
                 moviefromDb.Director = movie.Director;
                 moviefromDb.Price = movie.Price;
                 moviefromDb.ListPrice = movie.ListPrice;

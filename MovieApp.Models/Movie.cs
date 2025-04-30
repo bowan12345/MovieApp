@@ -23,6 +23,8 @@ namespace MovieApp.Models
         public int Duration { get; set; }//Duration in minutes
         [Required]
         public double Rating { get; set; }//Rating score
+        [Required]
+        public double ReleaseYear { get; set; }//Release Year
 
         [Required]
         [Display(Name = "List Price")] //List Price
