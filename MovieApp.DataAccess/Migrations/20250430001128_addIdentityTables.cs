@@ -32,6 +32,12 @@ namespace MovieApp.DataAccess.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -60,7 +66,7 @@ namespace MovieApp.DataAccess.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -179,17 +185,18 @@ namespace MovieApp.DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Director = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Duration = table.Column<int>(type: "int", nullable: false),
                     Rating = table.Column<double>(type: "float", nullable: false),
                     ListPrice = table.Column<double>(type: "float", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
-                    Price50 = table.Column<double>(type: "float", nullable: false),
-                    Price100 = table.Column<double>(type: "float", nullable: false),
+                    Price5 = table.Column<double>(type: "float", nullable: false),
+                    Price10 = table.Column<double>(type: "float", nullable: false),
+                    YoutubeId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -215,14 +222,14 @@ namespace MovieApp.DataAccess.Migrations
 
             migrationBuilder.InsertData(
                 table: "Movies",
-                columns: new[] { "Id", "CategoryId", "Description", "Director", "Duration", "ImageUrl", "ListPrice", "Price", "Price100", "Price50", "Rating", "Title" },
+                columns: new[] { "Id", "CategoryId", "Description", "Director", "Duration", "ImageUrl", "ListPrice", "Name", "Price", "Price10", "Price5", "Rating", "YoutubeId" },
                 values: new object[,]
                 {
-                    { 1, 1, "A thrilling journey through uncharted lands.", "John Smith", 130, "", 29.989999999999998, 24.989999999999998, 19.989999999999998, 22.989999999999998, 8.1999999999999993, "The Great Adventure" },
-                    { 2, 2, "A heartfelt romantic story set in Paris.", "Emily Johnson", 115, "", 24.989999999999998, 19.989999999999998, 15.99, 17.989999999999998, 7.5, "Love in Paris" },
-                    { 3, 3, "Comedy that will leave you in stitches.", "Mike Chang", 98, "", 19.989999999999998, 15.99, 11.99, 13.99, 7.7999999999999998, "The Laugh Factory" },
-                    { 4, 4, "A science fiction epic exploring distant galaxies.", "Samantha Lee", 145, "", 34.990000000000002, 28.989999999999998, 23.989999999999998, 26.989999999999998, 8.5999999999999996, "Beyond the Stars" },
-                    { 5, 1, "A chilling horror story that will keep you up at night.", "Richard Black", 105, "", 22.989999999999998, 18.989999999999998, 14.99, 16.989999999999998, 6.9000000000000004, "Haunted Echoes" }
+                    { 1, 1, "A thrilling journey through uncharted lands.", "John Smith", 130, "", 29.989999999999998, "The Great Adventure", 24.989999999999998, 19.989999999999998, 22.989999999999998, 8.1999999999999993, "" },
+                    { 2, 2, "A heartfelt romantic story set in Paris.", "Emily Johnson", 115, "", 24.989999999999998, "Love in Paris", 19.989999999999998, 15.99, 17.989999999999998, 7.5, "" },
+                    { 3, 3, "Comedy that will leave you in stitches.", "Mike Chang", 98, "", 19.989999999999998, "The Laugh Factory", 15.99, 11.99, 13.99, 7.7999999999999998, "" },
+                    { 4, 4, "A science fiction epic exploring distant galaxies.", "Samantha Lee", 145, "", 34.990000000000002, "Beyond the Stars", 28.989999999999998, 23.989999999999998, 26.989999999999998, 8.5999999999999996, "" },
+                    { 5, 1, "A chilling horror story that will keep you up at night.", "Richard Black", 105, "", 22.989999999999998, "Haunted Echoes", 18.989999999999998, 14.99, 16.989999999999998, 6.9000000000000004, "" }
                 });
 
             migrationBuilder.CreateIndex(

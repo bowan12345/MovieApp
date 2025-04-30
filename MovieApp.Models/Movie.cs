@@ -14,10 +14,10 @@ namespace MovieApp.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public string Title { get; set; }
+        public string Name { get; set; }
         [Required]
         public string Director { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         public int Duration { get; set; }//Duration in minutes
@@ -30,19 +30,22 @@ namespace MovieApp.Models
         public double ListPrice { get; set; }
 
         [Required]
-        [Display(Name = "Price for 1-50")]
+        [Display(Name = "Price for 1-5")]
         [Range(1, 1000)]
         public double Price { get; set; }
 
         [Required]
-        [Display(Name = "Price for 50+")]
+        [Display(Name = "Price for 5-10")]
         [Range(1, 1000)]
-        public double Price50 { get; set; }
+        public double Price5 { get; set; }
 
         [Required]
-        [Display(Name = "Price for 100+")]
+        [Display(Name = "Price for 10+")]
         [Range(1, 1000)]
-        public double Price100 { get; set; }
+        public double Price10 { get; set; }
+
+        //youtube video id
+        public string? YoutubeId { get; set; }
 
         //foreign key
         public int CategoryId { get; set; }
@@ -52,6 +55,6 @@ namespace MovieApp.Models
         [ValidateNever]
         public Category Category { get; set; }
         [ValidateNever]
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

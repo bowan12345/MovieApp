@@ -28,12 +28,12 @@ namespace MovieApp.DataAccess.Repository
             var moviefromDb = _db.Movies.FirstOrDefault(p => p.Id == movie.Id);
             if (moviefromDb != null)
             {
-                moviefromDb.Title = movie.Title;
+                moviefromDb.Name = movie.Name;
                 moviefromDb.Director = movie.Director;
                 moviefromDb.Price = movie.Price;
                 moviefromDb.ListPrice = movie.ListPrice;
-                moviefromDb.Price50 = movie.Price50;
-                moviefromDb.Price100 = movie.Price100;
+                moviefromDb.Price5 = movie.Price5;
+                moviefromDb.Price10 = movie.Price10;
                 moviefromDb.Duration = movie.Duration;
                 moviefromDb.Description = movie.Description;
                 moviefromDb.CategoryId = movie.CategoryId;
