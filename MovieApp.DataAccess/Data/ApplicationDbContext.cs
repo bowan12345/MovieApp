@@ -34,17 +34,17 @@ namespace MovieApp.DataAccess.Data
                   new Movie
                   {
                       Id = 1,
-                      Name = "The Great Adventure",
-                      Director = "John Smith",
-                      Description = "A thrilling journey through uncharted lands.",
+                      Name = "Inception",
+                      Director = "Christopher Nolan",
+                      Description = "This mind-bending sci-fi thriller follows a skilled thief, Dom Cobb, who is able to steal secrets from within a person's subconscious while they dream",
                       Duration = 130,
                       Rating = 8.2,
                       ListPrice = 29.99,
                       Price = 24.99,
                       Price5 = 22.99,
                       Price10 = 19.99,
-                      YoutubeId = "",
-                      CategoryId = 1, // Action
+                      YoutubeId = "YoHD9XEInc0",
+                      CategoryId = 4, // Action
                       ImageUrl = ""
                   },
                     new Movie
@@ -59,24 +59,24 @@ namespace MovieApp.DataAccess.Data
                         Price = 19.99,
                         Price5 = 17.99,
                         Price10 = 15.99,
-                        YoutubeId = "",
-                        CategoryId = 2, // Romance
+                        YoutubeId = "lhMcYv0PG6o",
+                        CategoryId = 3, 
                         ImageUrl = ""
                     },
                     new Movie
                     {
                         Id = 3,
-                        Name = "The Laugh Factory",
-                        Director = "Mike Chang",
-                        Description = "Comedy that will leave you in stitches.",
+                        Name = "The Dark Knight",
+                        Director = "Christopher Nolan",
+                        Description = "The second installment of Nolan’s Batman trilogy, this film follows Batman as he faces off against the Joker,",
                         Duration = 98,
                         Rating = 7.8,
                         ListPrice = 19.99,
                         Price = 15.99,
                         Price5 = 13.99,
                         Price10 = 11.99,
-                        YoutubeId = "",
-                        CategoryId = 3, // Comedy
+                        YoutubeId = "EXeTwQWrcwY",
+                        CategoryId = 1, 
                         ImageUrl = ""
                     },
                     new Movie
@@ -91,24 +91,24 @@ namespace MovieApp.DataAccess.Data
                         Price = 28.99,
                         Price5 = 26.99,
                         Price10 = 23.99,
-                        YoutubeId = "",
-                        CategoryId = 4, // Science Fiction
+                        YoutubeId = "mBrVtZZeIm8",
+                        CategoryId = 4,
                         ImageUrl = ""
                     },
                     new Movie
                     {
                         Id = 5,
-                        Name = "Haunted Echoes",
-                        Director = "Richard Black",
-                        Description = "A chilling horror story that will keep you up at night.",
+                        Name = "Fight Club",
+                        Director = "David Fincher",
+                        Description = "Based on Chuck Palahniuk's novel, Fight Club follows an unnamed protagonist who, disillusioned with his mundane life, meets the charismatic Tyler Durden",
                         Duration = 105,
                         Rating = 6.9,
                         ListPrice = 22.99,
                         Price = 18.99,
                         Price5 = 16.99,
                         Price10 = 14.99,
-                        YoutubeId = "",
-                        CategoryId = 1, // Horror
+                        YoutubeId = "qtRKdVHc-cE",
+                        CategoryId = 1, 
                         ImageUrl = ""
                     }
                  );
