@@ -7,9 +7,9 @@ using MovieApp.DataAccess.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 
-namespace MovieAppWeb.Areas.Customer.Controllers
+namespace MovieAppWeb.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Customer")]
     public class MovieController : Controller
         {
             private readonly ApplicationDbContext _context;

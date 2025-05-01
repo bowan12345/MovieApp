@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MovieApp.DataAccess.Data;
 
-namespace MovieAppWeb.Areas.Customer.Controllers
+namespace MovieAppWeb.Areas.Admin.Controllers
 {
-    [Area("Customer")]
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
