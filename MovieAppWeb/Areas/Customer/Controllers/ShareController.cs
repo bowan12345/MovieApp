@@ -3,7 +3,7 @@ using MovieApp.Utility;
 
 namespace MovieAppWeb.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [Area("Customer")]
     public class ShareController : Controller
     {
         private readonly QrCodeUtil _qrCodeUtil;

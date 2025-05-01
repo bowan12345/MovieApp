@@ -211,6 +211,12 @@ namespace MovieAppWeb.Areas.Identity.Pages.Account
             }
 
             // If we got this far, something failed, redisplay form
+            // reload the role list
+            Input.RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+            {
+                Text = i,
+                Value = i
+            });
             return Page();
         }
 

@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MovieApp.DataAccess.Repository.IRepository;
 using MovieApp.Models;
+using MovieApp.Utility;
 
 namespace MovieAppWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = RoleName.Role_Admin)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
