@@ -1,5 +1,4 @@
-﻿﻿
-@model Movie
+﻿@model Movie
 <!-- Main Form Container -->
 <form method="post">
     <div class="card shadow border-0 mt-4">
@@ -18,109 +17,96 @@
             <div class="py-3">
                 <!-- Back Button Row -->
                 <div class="row">
-                    <div class="col-6 col-md-2 offset-lg-1 pb-1">
+                    <div class="col-6 col-md-2 pb-1">
                         <a asp-action="Index" class="btn btn-outline-primary bg-gradient mb-5 fw-semibold btn-sm text-uppercase">
-                            <small>Back to home</small>
+                            <medium><strong>Back to home</strong></medium>
                         </a>
                     </div>
                 </div>
 
-                <!-- Main Content Row (Split into Media and Details) -->
+                <!-- Main Content Row -->
                 <div class="row">
-                    <!-- Left Column - Media Section (Poster + Video) -->
-                    <div class="col-12 col-lg-4 text-center mb-3">
-                        <!-- Movie Poster Image -->
+                    <!-- Left Column - Large Movie Poster -->
+                    <div class="col-12 col-lg-6 pe-lg-4">
+                        <img src="@Model.ImageUrl" class="rounded shadow w-100"
+                             style="max-height: 600px; object-fit: contain;"
+                             alt="@Model.Name movie poster" />
+                    </div>
+
+                    <!-- Right Column - Trailer and Purchase Info -->
+                    <div class="col-12 col-lg-6">
+                        <!-- Top Section - Trailer -->
                         <div class="mb-4">
-                            <img src="@Model.ImageUrl" width="100%" class="rounded shadow"
-                                 style="max-height: 400px; object-fit: contain;"
-                                 alt="@Model.Name movie poster" />
-                        </div>
-
-                        <!-- YouTube Video Embed -->
-                        @if (!string.IsNullOrEmpty(Model.YoutubeId))
-                        {
-                            <div class="mb-4">
-                                <!-- Video Title with Play Icon -->
-                                <h5 class="text-start mb-3">
+                            @if (!string.IsNullOrEmpty(Model.YoutubeId))
+                            {
+                                <h4 class="mb-3">
                                     <i class="bi bi-play-circle-fill me-2"></i>Official Trailer
-                                </h5>
-
-                                <!-- Responsive 16:9 Video Container -->
-                                <div class="ratio ratio-16x9 shadow">
+                                </h4>
+                                <div class="ratio ratio-16x9 shadow mb-3">
                                     <iframe src="https://www.youtube.com/embed/@Model.YoutubeId?rel=0"
                                             title="@Model.Name official trailer"
                                             frameborder="0"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowfullscreen></iframe>
                                 </div>
-                            </div>
-                        }
-                    </div>
-
-                    <!-- Right Column - Movie Details -->
-                    <div class="col-12 col-lg-7 offset-lg-1">
-                        <!-- Category Badge -->
-                        <div class="col-12 col-md-6 pb-4">
-                            <span class="badge bg-primary">@Model.Category.Name</span>
-                        </div>
-
-                        <!-- Rating -->
-                        <div class="row ps-2">
-                            <h6 class="text-dark text-opacity-50">Rating : @Model.Rating</h6>
-                        </div>
-
-                        <!-- Pricing Information -->
-                        <div class="row ps-2">
-                            <h6 class="text-dark text-opacity-50 pb-2">
-                                List Price:
-                                <span class="text-decoration-line-through">
-                                    @Model.ListPrice.ToString("c")
-                                </span>
-                            </h6>
-                        </div>
-
-                        <!-- Price Tiers -->
-                        <div class="row ps-2">
-                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div>Price</div>
-                            </div>
-                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div>@Model.Price.ToString("c")</div>
-                            </div>
-                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div>@Model.Price5.ToString("c")</div>
-                            </div>
-                            <div class="p-1 col-3 col-lg-2 bg-white text-warning fw-bold">
-                                <div>@Model.Price10.ToString("c")</div>
-                            </div>
-                        </div>
-
-                        <!-- Movie Description -->
-                        <div class="row pl-2 my-3">
-                            <p class="text-secondary lh-sm">@Html.Raw(Model.Description)</p>
-                        </div>
-
-                        <!-- Quantity Selector -->
-                        <div class="row pl-2 mb-3">
-                            <div class="col-md-4">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text bg-primary text-white border-0 fw-semibold"
-                                          id="inputGroup-sizing-default">
-                                        Count
-                                    </span>
-                                    <input type="number" value="1" class="form-control text-end"
-                                           aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="badge bg-secondary">CLASSIC TRAILER</span>
+                                    <span class="text-muted">💤 Dream sequence</span>
                                 </div>
+                            }
+                        </div>
+
+                        <!-- Middle Section - Purchase Info -->
+                        <div class="card shadow-sm mb-4">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="mb-0">PERSON ACTION</h5>
+                                    <span class="badge bg-primary">@Model.Category.Name</span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <h6 class="text-dark text-opacity-50 mb-1">RATING: <strong>@Model.Rating</strong></h6>
+                                    <h6 class="text-dark text-opacity-50">
+                                        LIST PRICE:
+                                        <span class="text-decoration-line-through">
+                                            @Model.ListPrice.ToString("c")
+                                        </span>
+                                    </h6>
+                                </div>
+
+                                <div class="p-3 bg-light rounded mb-3">
+                                    <div class="row text-center">
+                                        <div class="col-3">
+                                            <div class="fw-bold">Price</div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="text-success fw-bold">@Model.Price.ToString("c")</div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="text-success fw-bold">@Model.Price5.ToString("c")</div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="text-success fw-bold">@Model.Price10.ToString("c")</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text bg-primary text-white">Count</span>
+                                    <input type="number" value="1" min="1" class="form-control">
+                                </div>
+
+                                <button type="submit" disabled
+                                        class="btn btn-primary w-100 py-2 fw-bold">
+                                    ADD TO CART (COMING SOON...)
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Add to Cart Button -->
-                        <div class="row">
-                            <div class="col-12 col-md-6 pb-1">
-                                <button type="submit" disabled
-                                        class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
-                                    Add to Cart (Coming Soon...)
-                                </button>
+                        <!-- Bottom Section - Description -->
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">About the Movie</h5>
+                                <p class="card-text text-secondary">@Html.Raw(Model.Description)</p>
                             </div>
                         </div>
                     </div>
@@ -130,5 +116,22 @@
     </div>
 </form>
 
-<!-- Bootstrap Icons CDN (required for the play icon) -->
+<!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+<style>
+    /* Custom styling for better visual hierarchy */
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .ratio-16x9 {
+        border-radius: 0.25rem;
+        overflow: hidden;
+    }
+
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.35em 0.65em;
+    }
+</style>

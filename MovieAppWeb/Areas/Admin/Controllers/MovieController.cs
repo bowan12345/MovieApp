@@ -89,6 +89,14 @@ namespace MovieAppWeb.Areas.Admin.Controllers
                     _Movie.Movie.ImageUrl = @"\images\movie\" + fileName;
                 }
 
+                if (_Movie.Movie.CategoryId ==0)
+                {
+                    TempData["error"] = "Please Choose the Movie's Category";
+                    //ModelState.AddModelError("CategoryId", "Please Choose the Movie's Category");
+                    return RedirectToAction("Upsert", _Movie);
+                }
+
+
                 if (_Movie.Movie.Id == 0)
                 {
                     _unitOfWork.movieRepository.Add(_Movie.Movie);

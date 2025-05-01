@@ -37,6 +37,7 @@ namespace MovieApp.DataAccess.Repository
                 moviefromDb.Price10 = movie.Price10;
                 moviefromDb.Duration = movie.Duration;
                 moviefromDb.Description = movie.Description;
+                moviefromDb.YoutubeId = movie.YoutubeId;
                 moviefromDb.CategoryId = movie.CategoryId;
                 if (movie.ImageUrl != null)
                 {

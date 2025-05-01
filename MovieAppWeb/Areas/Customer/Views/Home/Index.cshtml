@@ -1,40 +1,95 @@
-﻿﻿
-@model IEnumerable<Movie>
-<div class="row pb-3">
+﻿@model IEnumerable<Movie>
+
+<style>
+    
+    .movie-card-img {
+        width: 100%; /* Full width of container */
+        aspect-ratio: 2/3; /* Standard movie poster aspect ratio (2:3) */
+        object-fit: cover; /* Crop image to fill container while maintaining aspect ratio */
+        object-position: top center; /* Prioritize showing the top center of images (faces/headlines) */
+    }
+
+    .movie-card {
+        height: 100%; /* Take full height of grid column */
+        display: flex; /* Enable flexbox layout */
+        flex-direction: column; /* Stack children vertically */
+        transition: transform 0.3s ease; /* Smooth hover animation */
+    }
+
+    .movie-card:hover {
+        transform: translateY(-5px); /* Lift card 5px on hover */
+    }
+    
+    .movie-card-body {
+        flex-grow: 1; /* Expand to fill available space */
+        padding: 1.25rem; /* Standard card padding */
+        display: flex;
+        flex-direction: column;
+    }
+   
+    .movie-title {
+        display: -webkit-box; /* Required for line clamping */
+        -webkit-line-clamp: 2; /* Limit title to 2 lines */
+        -webkit-box-orient: vertical; /* Vertical line stacking */
+        overflow: hidden; /* Hide overflow content */
+        text-overflow: ellipsis; /* Add ... for truncated text */
+        min-height: 3em; /* Consistent height even for 1-line titles */
+        margin-bottom: 0.5rem; /* Space below title */
+    }
+
+    .movie-price {
+        margin-top: auto; /* Push prices to bottom of flex container */
+    }
+
+    @@media (max-width: 768px) {
+        .movie-card-img {
+            aspect-ratio: 3/4; /* Slightly different ratio for mobile */
+        }
+    }
+</style>
+
+<!-- Main Grid Container -->
+<div class="row g-4 pb-3">
+    <!-- g-4 adds consistent gutter spacing -->
     @foreach (var movie in Model)
     {
-        <div class="col-lg-3 col-sm-6">
-            <div class=" row p-2">
-                <div class="col-12 p-1">
-                    <div class="card border-0 p-3 shadow border-top border-5 rounded">
-                        <img src="@movie.ImageUrl" class="card-img-top rounded" />
-                        <div class="card-body pb-0">
-                            <div class="pl-1">
-                                <p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@movie.Name</p>
-                                <p class="card-title text-warning text-center">by <b>@movie.Director</b></p>
-                            </div>
-                            <div class="pl-1">
-                                <p class="text-dark text-opacity-75 text-center mb-0">
-                                    List Price:
-                                    <span class="text-decoration-line-through">
-                                        @movie.ListPrice.ToString("c")
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="pl-1">
-                                <p class="text-dark text-opacity-75 text-center">
-                                    As low as:
-                                    <span>
-                                        @movie.Price10.ToString("c")
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
+        <!-- Grid Column - responsive widths -->
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+            <!-- Card Container -->
+            <div class="card shadow border-0 h-100 movie-card">
+
+                <!-- Movie Poster Image -->
+                <img src="@movie.ImageUrl"
+                     class="card-img-top movie-card-img"
+                     alt="@movie.Name poster">  
+                <!-- Card Content Area -->
+                <div class="card-body movie-card-body">
+                    <!-- Movie Title -->
+                    <h5 class="card-title text-dark text-center movie-title">@movie.Name</h5>
+                    <!-- Director -->
+                    <p class="text-muted text-center mb-2">by @movie.Director</p>
+
+                    <!-- Pricing Section -->
+                    <div class="movie-price">
+                        <!-- Original Price (strikethrough) -->
+                        <p class="text-center mb-1">
+                            <span class="text-decoration-line-through text-muted">
+                                @movie.ListPrice.ToString("c")  
+                            </span>
+                        </p>
+                        <!-- Discounted Price -->
+                        <p class="text-center fw-bold text-primary">
+                            As low as: @movie.Price10.ToString("c")
+                        </p>
                     </div>
+                </div>
+
+                <!-- Details Button -->
+                <div class="card-footer bg-transparent border-0 pb-3 pt-0">
                     <a asp-action="Details"
                        asp-route-movieId="@movie.Id"
-                       class=" btn btn-primary bg-gradient border-0 form-control">
-                        Details
+                       class="btn btn-primary w-100 py-2">
+                        DETAILS
                     </a>
                 </div>
             </div>
