@@ -22,9 +22,12 @@ namespace MovieApp.Models
         [Required]
         public int Duration { get; set; }//Duration in minutes
         [Required]
+        [Range(0, 10, ErrorMessage = "Rating should be between 0 and 10")]
         public double Rating { get; set; }//Rating score
+        
         [Required]
-        public double ReleaseYear { get; set; }//Release Year
+        [Range(1900, 2100, ErrorMessage = "ReleaseYear should be between 1900 and 2100")]
+        public int ReleaseYear { get; set; }//Release Year
 
         [Required]
         [Display(Name = "List Price")] //List Price

@@ -1,124 +1,113 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MovieApp.DataAccess.Repository.IRepository;
 using MovieApp.Models;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using MovieApp.DataAccess.Data;
 
 namespace MovieAppWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public CategoryController(ApplicationDbContext context)
+        private readonly IUnitOfWork _unitOfWork;
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var categories = await _context.Categories.ToListAsync();
+            List<Category> categories = _unitOfWork.categoryRepository.GetAll().ToList();
             return View(categories);
         }
 
+        //return a create page
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,DisplayOrder")] Category category)
+        public IActionResult Create(Category _category)
         {
+            if (_category.Name.Equals(_category.DisplayOrder.ToString()))
+            {
+                ModelState.AddModelError("Name", "The Display Order cannot exactly match the name ");
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(category);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _unitOfWork.categoryRepository.Add(_category);
+                _unitOfWork.Save();
+                TempData["success"] = "Category created successfully";
+                return RedirectToAction("Index");
             }
-            return View(category);
+            return View();
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        //edit button
+        public IActionResult Edit(int id)
         {
-            if (id == null)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-
-            var category = await _context.Categories.FindAsync(id);
+            Category category = _unitOfWork.categoryRepository.Get(u => u.Id == id);
             if (category == null)
             {
                 return NotFound();
             }
             return View(category);
         }
+
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DisplayOrder")] Category category)
+        public IActionResult Edit(Category _category)
         {
-            if (id != category.Id)
+            if (_category.Name.Equals(_category.DisplayOrder.ToString()))
             {
-                return NotFound();
+                ModelState.AddModelError("Name", "The Display Order cannot exactly match the name ");
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CategoryExists(category.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _unitOfWork.categoryRepository.Update(_category);
+                _unitOfWork.Save();
+                TempData["success"] = "Category updated successfully";
+                return RedirectToAction("Index");
             }
-            return View(category);
+            return View();
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        //Delete button
+        public IActionResult Delete(int id)
         {
-            if (id == null)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Category category = _unitOfWork.categoryRepository.Get(u => u.Id == id);
             if (category == null)
             {
                 return NotFound();
             }
-
             return View(category);
         }
 
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteGet(int? id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool CategoryExists(int id)
-        {
-            return _context.Categories.Any(e => e.Id == id);
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            Category category = _unitOfWork.categoryRepository.Get(u => u.Id == id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            _unitOfWork.categoryRepository.Remove(category);
+            _unitOfWork.Save();
+            TempData["success"] = "Category Deleted successfully";
+            return RedirectToAction("Index");
         }
     }
 }
-

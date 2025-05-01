@@ -1,150 +1,136 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MovieApp.Models;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using MovieApp.DataAccess.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
+using MovieApp.DataAccess.Repository.IRepository;
+using MovieApp.Models;
+using MovieApp.Models.ViewModels;
 
 namespace MovieAppWeb.Areas.Admin.Controllers
 {
-    [Area("Customer")]
+    [Area("Admin")]
     public class MovieController : Controller
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public MovieController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
-            private readonly ApplicationDbContext _context;
+            _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
+        }
 
-            public MovieController(ApplicationDbContext context)
+        public IActionResult Index()
+        {
+            List<Movie> movies = _unitOfWork.movieRepository.GetAll(includeProperties: "Category").ToList();
+            return View(movies);
+        }
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<Movie> movies = _unitOfWork.movieRepository.GetAll(includeProperties: "Category").ToList();
+            return Json(new { data = movies });
+
+        }
+
+
+        //return a create page
+        public IActionResult Upsert(int? id)
+        {
+            MovieVM movieVM = new()
             {
-                _context = context;
+                CategoryList = _unitOfWork.categoryRepository.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+                Movie = new Movie()
+            };
+            if (id == null || id == 0)
+            {
+                //create
+                return View(movieVM);
+            }
+            else
+            {
+                //update
+                movieVM.Movie = _unitOfWork.movieRepository.Get(u => u.Id == id);
+                return View(movieVM);
             }
 
-            public async Task<IActionResult> Index()
+
+        }
+
+        [HttpPost]
+        public IActionResult Create(MovieVM _Movie, IFormFile? file)
+        {
+
+            if (ModelState.IsValid)
             {
-                var movies = await _context.Movies.Include(m => m.Category).ToListAsync();
-                return View(movies);
-            }
-
-            public async Task<IActionResult> Details(int? id)
-            {
-                if (id == null)
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                if (file != null)
                 {
-                    return NotFound();
-                }
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string productPath = Path.Combine(wwwRootPath, @"images\movie");
 
-                var movie = await _context.Movies
-                    .Include(m => m.Category)
-                    .FirstOrDefaultAsync(m => m.Id == id);
-                if (movie == null)
-                {
-                    return NotFound();
-                }
-
-                return View(movie);
-            }
-
-            public IActionResult Create()
-            {
-                ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-                return View();
-            }
-
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public async Task<IActionResult> Create([Bind("Id,Title,Description,ReleaseYear,Director,ImageUrl,CategoryId")] Movie movie)
-            {
-                if (ModelState.IsValid)
-                {
-                    _context.Add(movie);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", movie.CategoryId);
-                return View(movie);
-            }
-
-            public async Task<IActionResult> Edit(int? id)
-            {
-                if (id == null)
-                {
-                    return NotFound();
-                }
-
-                var movie = await _context.Movies.FindAsync(id);
-                if (movie == null)
-                {
-                    return NotFound();
-                }
-                ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", movie.CategoryId);
-                return View(movie);
-            }
-
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,ReleaseYear,Director,ImageUrl,CategoryId")] Movie movie)
-            {
-                if (id != movie.Id)
-                {
-                    return NotFound();
-                }
-
-                if (ModelState.IsValid)
-                {
-                    try
+                    //check imageUrl is null or not
+                    if (!string.IsNullOrEmpty(_Movie.Movie.ImageUrl))
                     {
-                        _context.Update(movie);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!MovieExists(movie.Id))
+                        //delete old image
+                        string oldImage = Path.Combine(wwwRootPath, _Movie.Movie.ImageUrl.Trim('\\'));
+                        if (System.IO.File.Exists(oldImage))
                         {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
+                            System.IO.File.Delete(oldImage);
                         }
                     }
-                    return RedirectToAction(nameof(Index));
+
+                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+                    _Movie.Movie.ImageUrl = @"\images\movie\" + fileName;
                 }
-                ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", movie.CategoryId);
-                return View(movie);
-            }
-     
-            public async Task<IActionResult> Delete(int? id)
-            {
-                if (id == null)
+
+                if (_Movie.Movie.Id == 0)
                 {
-                    return NotFound();
+                    _unitOfWork.movieRepository.Add(_Movie.Movie);
+                    TempData["success"] = "Product created successfully";
                 }
-
-                var movie = await _context.Movies
-                    .Include(m => m.Category)
-                    .FirstOrDefaultAsync(m => m.Id == id);
-                if (movie == null)
+                else
                 {
-                    return NotFound();
+                    _unitOfWork.movieRepository.Update(_Movie.Movie);
+                    TempData["success"] = "Product updated successfully";
                 }
-
-                return View(movie);
+                _unitOfWork.Save();
+                return RedirectToAction("Index");
             }
-
-            [HttpPost, ActionName("Delete")]
-            [ValidateAntiForgeryToken]
-            public async Task<IActionResult> DeleteConfirmed(int id)
+            else
             {
-                var movie = await _context.Movies.FindAsync(id);
-                _context.Movies.Remove(movie);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-
-            private bool MovieExists(int id)
-            {
-                return _context.Movies.Any(e => e.Id == id);
+                _Movie.CategoryList = _unitOfWork.categoryRepository.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+                return View("Upsert",_Movie);
             }
         }
+
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+
+            Movie movie = _unitOfWork.movieRepository.Get(u => u.Id == id);
+            if (movie == null)
+            {
+                return Json(new { success = false, message = "Product not found" });
+            }
+            //delete old image
+            string oldImage = Path.Combine(_webHostEnvironment.WebRootPath, string.IsNullOrEmpty(movie.ImageUrl) ? "" : movie.ImageUrl.Trim('\\'));
+            if (System.IO.File.Exists(oldImage))
+            {
+                System.IO.File.Delete(oldImage);
+            }
+            _unitOfWork.movieRepository.Remove(movie);
+            _unitOfWork.Save();
+            return Json(new { success = true, message = "Delete successfully" });
+        }
+    }
 }
-
-

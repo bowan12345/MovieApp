@@ -1,56 +1,40 @@
-﻿@model IEnumerable<MovieApp.Models.Movie>
-
-@{
-    ViewData["Title"] = "Movies";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-<div class="container p-3">
-    <div class="row pt-4">
-        <div class="col-6">
-            <h2 class="text-primary">Movie List</h2>
+﻿﻿
+@model List<Movie>
+<div class=" card shadow border-0 mt-4">
+    <div class=" card-header bg-dark bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2"> Movie List </h2>
+            </div>
         </div>
-        <div class="col-6 text-end">
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> &nbsp; Add New Movie
+    </div>
+
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-6">
+            </div>
+
+            <div class="col-6 text-end">
+            <a asp-controller="Movie" asp-action="Upsert" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create New Movie
             </a>
         </div>
     </div>
-    <br /><br />
 
-    <table class="table table-bordered table-striped" style="width:100%">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Director</th>
-                <th>Release Year</th>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var obj in Model)
-            {
-                <tr>
-                    <td>@obj.Name</td>
-                    <td>@obj.Director</td>
-                    <td>@obj.ReleaseYear</td>
-                    <td>@obj.Category.Name</td>
-                    <td>
-                        <div class="w-75 btn-group" role="group">
-                            <a asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
-                                <i class="bi bi-pencil-square"></i> Edit
-                            </a>
-                            <a asp-action="Details" asp-route-id="@obj.Id" class="btn btn-info mx-2">
-                                <i class="bi bi-info-circle"></i> Details
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-2">
-                                <i class="bi bi-trash-fill"></i> Delete
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<table id="tblData" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Director</th>
+            <th>Duration</th>
+            <th>Rating</th>
+            <th>Category</th>
+            <th></th>
+        </tr>
+    </thead>
+</table>
 </div>
+
+@section Scripts {
+    <script src="/js/movie.js"></script>
+}
