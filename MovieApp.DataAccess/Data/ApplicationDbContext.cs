@@ -46,7 +46,7 @@ namespace MovieApp.DataAccess.Data
                       Price10 = 19.99,
                       YoutubeId = "YoHD9XEInc0",
                       CategoryId = 4, // Action
-                      ImageUrl = ""
+                      ImageUrl = "\\images\\movie\\824295b2-2fa4-48e1-9055-5fb63b9b1ddf.jpg"
                   },
                     new Movie
                     {
@@ -63,7 +63,7 @@ namespace MovieApp.DataAccess.Data
                         Price10 = 15.99,
                         YoutubeId = "lhMcYv0PG6o",
                         CategoryId = 3,
-                        ImageUrl = ""
+                        ImageUrl = "\\images\\movie\\83309ec0-a276-48d3-b673-bcbe55030fc3.jpg"
                     },
                     new Movie
                     {
@@ -80,7 +80,7 @@ namespace MovieApp.DataAccess.Data
                         Price10 = 11.99,
                         YoutubeId = "EXeTwQWrcwY",
                         CategoryId = 1,
-                        ImageUrl = ""
+                        ImageUrl = "\\images\\movie\\826c3850-f961-4b14-b8af-9c731ea8807f.jpg"
                     },
                     new Movie
                     {
@@ -97,7 +97,7 @@ namespace MovieApp.DataAccess.Data
                         Price10 = 23.99,
                         YoutubeId = "2t7z_44nGio",
                         CategoryId = 4,
-                        ImageUrl = ""
+                        ImageUrl = "\\images\\movie\\0ff60068-9f54-440a-be9a-c26c6ed64469.jpg"
                     },
                     new Movie
                     {
@@ -114,7 +114,7 @@ namespace MovieApp.DataAccess.Data
                         Price10 = 14.99,
                         YoutubeId = "qtRKdVHc-cE",
                         CategoryId = 1,
-                        ImageUrl = ""
+                        ImageUrl = "\\images\\movie\\056287bf-89af-4ed0-bc8e-3b4a2f1ed642.jpg"
                     },
                     new Movie
                     {
@@ -131,7 +131,7 @@ namespace MovieApp.DataAccess.Data
                         Price10 = 14.99,
                         YoutubeId = "PLl99DlL6b4",
                         CategoryId = 1,
-                        ImageUrl = ""
+                        ImageUrl = "\\images\\movie\\a42862fb-73a9-40bd-aa10-472af8477d64.jpg"
                     },
                     new Movie
                     {
@@ -148,7 +148,7 @@ namespace MovieApp.DataAccess.Data
                         Price10 = 14.99,
                         YoutubeId = "vKQi3bBA1y8",
                         CategoryId = 1,
-                        ImageUrl = ""
+                        ImageUrl = "\\images\\movie\\677d1b65-0a3d-4427-9b44-be008bc678e5.jpg"
                     },
                     new Movie
                     {
@@ -165,7 +165,7 @@ namespace MovieApp.DataAccess.Data
                         Price10 = 14.99,
                         YoutubeId = "UaVTIH8mujA",
                         CategoryId = 1,
-                        ImageUrl = ""
+                        ImageUrl = "\\images\\movie\\af91e03f-a44a-4545-9d04-d9ae1c138eba.jpg"
                     }
                  );
         }
