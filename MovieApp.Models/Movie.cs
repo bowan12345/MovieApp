@@ -40,7 +40,7 @@ namespace MovieApp.Models
         public double Price { get; set; }
 
         [Required]
-        [Display(Name = "Price for 5-10")]
+        [Display(Name = "Price for 6-10")]
         [Range(1, 1000)]
         public double Price5 { get; set; }
 
