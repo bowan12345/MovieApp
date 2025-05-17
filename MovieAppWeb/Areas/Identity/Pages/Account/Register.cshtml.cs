@@ -127,9 +127,7 @@ namespace MovieAppWeb.Areas.Identity.Pages.Account
             if (!_roleManager.RoleExistsAsync(RoleName.Role_Customer).GetAwaiter().GetResult())
             {
                 _roleManager.CreateAsync(new IdentityRole(RoleName.Role_Customer)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(RoleName.Role_Company)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(RoleName.Role_Admin)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(RoleName.Role_Employee)).GetAwaiter().GetResult();
             }
 
             Input = new()
