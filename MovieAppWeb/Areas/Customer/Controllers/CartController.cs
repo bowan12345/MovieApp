@@ -109,6 +109,13 @@ namespace MovieAppWeb.Areas.Customer.Controllers
                 OrderHeader = new()
             };
 
+            // check the shopping cart to see if it is empty
+            if (ShoppingCartVM.ShoppingCartList.Count() <=0)
+            {
+                TempData["error"] = "Oops! Looks like your cart is empty.";
+                return RedirectToAction(nameof(Index));
+            }
+
             // assemble user address info
             ApplicationUser applicationUser = _unitOfWork.applicationUserRepository.Get(u => u.Id == userId);
             ShoppingCartVM.OrderHeader.ApplicationUser = applicationUser;
@@ -117,7 +124,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
                 cart.Price = GetPriceBasedOnQuantity(cart);
-                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+                ShoppingCartVM.OrderHeader.OrderTotal += Math.Round(cart.Price * cart.Count, 2);
             }
 
             return View(ShoppingCartVM);
@@ -145,7 +152,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
                 cart.Price = GetPriceBasedOnQuantity(cart);
-                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+                ShoppingCartVM.OrderHeader.OrderTotal += Math.Round(cart.Price * cart.Count, 2);
             }
 
             // assemble user address info
@@ -210,11 +217,8 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             _unitOfWork.orderHeaderRepository.UpdateStripePaymentIDById(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
             _unitOfWork.Save();
             Response.Headers.Add("Location", session.Url);
+            
             return new StatusCodeResult(303);
-
-
-            return RedirectToAction(nameof(OrderConfirmation), new { id = ShoppingCartVM.OrderHeader.Id });
-            //return View(ShoppingCartVM);
 
         }
 
@@ -224,20 +228,17 @@ namespace MovieAppWeb.Areas.Customer.Controllers
         {
             OrderHeader orderHeader = _unitOfWork.orderHeaderRepository.Get(x => x.Id == id, includeProperties: "ApplicationUser");
 
-            if (orderHeader.PaymentStatus != OrderStatus.PaymentStatusDelayedPayment)
-            {
-                //customer
-                var service = new SessionService();
-                Session session = service.Get(orderHeader.SessionId);
+            //update order status and payment status
+            var service = new SessionService();
+            Session session = service.Get(orderHeader.SessionId);
 
-                if (session.PaymentStatus.ToLower() == "paid")
-                {
-                    _unitOfWork.orderHeaderRepository.UpdateStripePaymentIDById(id, session.Id, session.PaymentIntentId);
-                    _unitOfWork.orderHeaderRepository.UpdateStatus(id, OrderStatus.StatusApproved, OrderStatus.PaymentStatusApproved);
-                    _unitOfWork.Save();
-                }
-                //HttpContext.Session.Clear();
+            if (session.PaymentStatus.ToLower() == "paid")
+            {
+                _unitOfWork.orderHeaderRepository.UpdateStripePaymentIDById(id, session.Id, session.PaymentIntentId);
+                _unitOfWork.orderHeaderRepository.UpdateStatus(id, OrderStatus.StatusApproved, OrderStatus.PaymentStatusApproved);
+                _unitOfWork.Save();
             }
+            //HttpContext.Session.Clear();
 
             //remove shopping cart
             List<ShoppingCart> shoppingCarts = _unitOfWork.shoppingCartRepository.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
