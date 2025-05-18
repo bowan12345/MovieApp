@@ -42,7 +42,7 @@ namespace MovieApp.DataAccess.Repository
             return query.FirstOrDefault();
         }
 
-        IEnumerable<T> IRepository<T>.GetAll(string? includeProperties = null)
+        IEnumerable<T> IRepository<T>.GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
         {
             IQueryable<T> query =dbset;
             if (!string.IsNullOrEmpty(includeProperties)) 

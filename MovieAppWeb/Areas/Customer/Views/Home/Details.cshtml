@@ -1,4 +1,4 @@
-﻿@model Movie
+﻿@model ShoppingCart
 <!-- Main Form Container -->
 <form method="post">
     <div class="card shadow border-0 mt-4">
@@ -6,8 +6,8 @@
         <div class="card-header bg-dark bg-gradient text-light py-4">
             <div class="row">
                 <div class="col-12 text-center">
-                    <h3 class="text-white text-uppercase">@Model.Name</h3>
-                    <p class="text-white-50 fw-semibold mb-0">by @Model.Director</p>
+                    <h3 class="text-white text-uppercase">@Model.Movie.Name</h3>
+                    <p class="text-white-50 fw-semibold mb-0">by @Model.Movie.Director</p>
                 </div>
             </div>
         </div>
@@ -28,23 +28,23 @@
                 <div class="row">
                     <!-- Left Column - Large Movie Poster -->
                     <div class="col-12 col-lg-6 pe-lg-4">
-                        <img src="@Model.ImageUrl" class="rounded shadow w-100"
+                        <img src="@Model.Movie.ImageUrl" class="rounded shadow w-100"
                              style="max-height: 600px; object-fit: contain;"
-                             alt="@Model.Name movie poster" />
+                             alt="@Model.Movie.Name movie poster" />
                     </div>
 
                     <!-- Right Column - Trailer and Purchase Info -->
                     <div class="col-12 col-lg-6">
                         <!-- Top Section - Trailer -->
                         <div class="mb-4">
-                            @if (!string.IsNullOrEmpty(Model.YoutubeId))
+                            @if (!string.IsNullOrEmpty(Model.Movie.YoutubeId))
                             {
                                 <h4 class="mb-3">
                                     <i class="bi bi-play-circle-fill me-2"></i>Official Trailer
                                 </h4>
                                 <div class="ratio ratio-16x9 shadow mb-3">
-                                    <iframe src="https://www.youtube.com/embed/@Model.YoutubeId?rel=0"
-                                            title="@Model.Name official trailer"
+                                    <iframe src="https://www.youtube.com/embed/@Model.Movie.YoutubeId?rel=0"
+                                            title="@Model.Movie.Name official trailer"
                                             frameborder="0"
                                             allowfullscreen></iframe>
                                 </div>
@@ -58,15 +58,15 @@
                         <div class="card shadow-sm mb-4">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="badge bg-primary">@Model.Category.Name</span>
+                                    <span class="badge bg-primary">@Model.Movie.Category.Name</span>
                                 </div>
 
                                 <div class="mb-3">
-                                    <h6 class="text-dark text-opacity-50 mb-1">RATING: <strong>@Model.Rating</strong></h6>
+                                    <h6 class="text-dark text-opacity-50 mb-1">RATING: <strong>@Model.Movie.Rating</strong></h6>
                                     <h6 class="text-dark text-opacity-50">
                                         LIST PRICE:
                                         <span class="text-decoration-line-through">
-                                            @Model.ListPrice.ToString("c")
+                                            @Model.Movie.ListPrice.ToString("c")
                                         </span>
                                     </h6>
                                 </div>
@@ -93,25 +93,26 @@
                                             <div class="fw-bold">Price:</div>
                                         </div>
                                         <div class="col-3">
-                                            <div class="text-success fw-bold">@Model.Price.ToString("c")</div>
+                                            <div class="text-success fw-bold">@Model.Movie.Price.ToString("c")</div>
                                         </div>
                                         <div class="col-3">
-                                            <div class="text-success fw-bold">@Model.Price5.ToString("c")</div>
+                                            <div class="text-success fw-bold">@Model.Movie.Price5.ToString("c")</div>
                                         </div>
                                         <div class="col-3">
-                                            <div class="text-success fw-bold">@Model.Price10.ToString("c")</div>
+                                            <div class="text-success fw-bold">@Model.Movie.Price10.ToString("c")</div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="input-group mb-3">
                                     <span class="input-group-text bg-primary text-white">Count</span>
-                                    <input type="number" value="1" min="1" class="form-control">
+                                    <input asp-for="Count"  type="number" value="1" class="form-control text-end"
+                                           aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
                                 </div>
 
-                                <button type="submit" disabled
-                                        class="btn btn-primary w-100 py-2 fw-bold">
-                                    ADD TO CART (COMING SOON...)
+                                <button type="submit" 
+                                        class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
+                                    ADD TO CART 
                                 </button>
                             </div>
                         </div>
@@ -120,7 +121,7 @@
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <h5 class="card-title">About the Movie</h5>
-                                <p class="card-text text-secondary">@Html.Raw(Model.Description)</p>
+                                <p class="card-text text-secondary">@Html.Raw(Model.Movie.Description)</p>
                             </div>
                         </div>
                     </div>

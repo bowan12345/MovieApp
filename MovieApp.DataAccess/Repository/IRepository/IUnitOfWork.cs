@@ -11,6 +11,10 @@ namespace MovieApp.DataAccess.Repository.IRepository
         ICategoryRepository categoryRepository { get; }
 
         IMovieRepository movieRepository { get; }
+        IShoppingCartRepository shoppingCartRepository { get; }
+        IApplicationUserRepository applicationUserRepository { get; }
+        IOrderHeaderRepository orderHeaderRepository { get; }
+        IOrderDetailRepository orderDetailRepository { get; }
         void Save();
     }
 }
