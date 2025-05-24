@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Elfie;
 using MovieApp.DataAccess.Repository.IRepository;
 using MovieApp.Models;
 using MovieApp.Models.ViewModels;
+using MovieApp.Utility;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -70,6 +72,8 @@ namespace MovieAppWeb.Areas.Customer.Controllers
                 //add new one
                 _unitOfWork.shoppingCartRepository.Add(cart);
                 _unitOfWork.Save();
+                //add shopping cart count into session
+                HttpContext.Session.SetInt32(SessionConstants.SessionCart, _unitOfWork.shoppingCartRepository.GetAll(x => x.ApplicationUserId == userId).Count());
             }
             else
             {

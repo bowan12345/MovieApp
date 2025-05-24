@@ -76,6 +76,9 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             if (cartFromDb.Count == 0)
             {
                 _unitOfWork.shoppingCartRepository.Remove(cartFromDb);
+                //update shopping cart session
+                HttpContext.Session.SetInt32(SessionConstants.SessionCart, _unitOfWork.shoppingCartRepository
+                                        .GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count() - 1);
             }
             else
             {
@@ -90,6 +93,9 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             var cartFromDb = _unitOfWork.shoppingCartRepository.Get(u => u.Id == cartId);
             _unitOfWork.shoppingCartRepository.Remove(cartFromDb);
             _unitOfWork.Save();
+            //update shopping cart session
+            HttpContext.Session.SetInt32(SessionConstants.SessionCart, _unitOfWork.shoppingCartRepository
+                                    .GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count() - 1);
             return RedirectToAction(nameof(Index));
         }
 
@@ -238,7 +244,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
                 _unitOfWork.orderHeaderRepository.UpdateStatus(id, OrderStatus.StatusApproved, OrderStatus.PaymentStatusApproved);
                 _unitOfWork.Save();
             }
-            //HttpContext.Session.Clear();
+            HttpContext.Session.Clear();
 
             //remove shopping cart
             List<ShoppingCart> shoppingCarts = _unitOfWork.shoppingCartRepository.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
