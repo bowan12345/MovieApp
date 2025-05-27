@@ -12,8 +12,8 @@ using MovieApp.DataAccess.Data;
 namespace MovieApp.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250527035921_AddMovieVoteTable")]
-    partial class AddMovieVoteTable
+    [Migration("20250527073611_AddIdentityTablesToDb")]
+    partial class AddIdentityTablesToDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -504,11 +504,7 @@ namespace MovieApp.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("MovieId", "UserId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_MovieVotes_MovieId_UserId");
+                    b.HasIndex("MovieId");
 
                     b.ToTable("MovieVotes");
                 });
@@ -703,12 +699,6 @@ namespace MovieApp.DataAccess.Migrations
                     b.HasOne("MovieApp.Models.Movie", null)
                         .WithMany("MovieVotes")
                         .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MovieApp.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

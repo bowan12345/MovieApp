@@ -1,98 +1,526 @@
 ﻿@model IEnumerable<Movie>
+@{
+    var firstMovie = Model.FirstOrDefault();
+}
 
-<style>
-    
-    .movie-card-img {
-        width: 100%; /* Full width of container */
-        aspect-ratio: 2/3; /* Standard movie poster aspect ratio (2:3) */
-        object-fit: cover; /* Crop image to fill container while maintaining aspect ratio */
-        object-position: top center; /* Prioritize showing the top center of images (faces/headlines) */
-    }
-
-    .movie-card {
-        height: 100%; /* Take full height of grid column */
-        display: flex; /* Enable flexbox layout */
-        flex-direction: column; /* Stack children vertically */
-        transition: transform 0.3s ease; /* Smooth hover animation */
-    }
-
-    .movie-card:hover {
-        transform: translateY(-5px); /* Lift card 5px on hover */
-    }
-    
-    .movie-card-body {
-        flex-grow: 1; /* Expand to fill available space */
-        padding: 1.25rem; /* Standard card padding */
-        display: flex;
-        flex-direction: column;
-    }
-   
-    .movie-title {
-        display: -webkit-box; /* Required for line clamping */
-        -webkit-line-clamp: 2; /* Limit title to 2 lines */
-        -webkit-box-orient: vertical; /* Vertical line stacking */
-        overflow: hidden; /* Hide overflow content */
-        text-overflow: ellipsis; /* Add ... for truncated text */
-        min-height: 3em; /* Consistent height even for 1-line titles */
-        margin-bottom: 0.5rem; /* Space below title */
-    }
-
-    .movie-price {
-        margin-top: auto; /* Push prices to bottom of flex container */
-    }
-
-    @@media (max-width: 768px) {
-        .movie-card-img {
-            aspect-ratio: 3/4; /* Slightly different ratio for mobile */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Cinema</title>
+    <style>
+        /* Header & Navigation */
+        .cinema-header {
+            background-color: black;
+            padding: 10px 0;
         }
-    }
-</style>
+        
+        .cinema-logo {
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        /* Hero Carousel */
+        .hero-carousel {
+            margin-bottom: 2rem;
+        }
+        
+        .hero-carousel .carousel-item {
+            height: 500px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 5rem;
+            color: white;
+        }
+        
+        .hero-title {
+            font-size: 4rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            color:antiquewhite;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .book-now-btn {
+            display: inline-block;
+            border: 2px solid white;
+            color: white;
+            padding: 0.5rem 2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            background-color: transparent;
+            max-width: 200px;
+            text-align: center;
+        }
+        
+        .book-now-btn:hover {
+            background-color: white;
+            color: black;
+        }
+        
+        /* Movie Categories */
+        .movie-categories {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+        
+        .category-title {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #e50914;
+            display: inline-block;
+            margin: 0 1rem;
+            padding-bottom: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .category-title.active {
+            border-bottom: 2px solid #e50914;
+        }
+        
+        /* Movie Cards */
+        .movie-slider {
+            position: relative;
+            padding: 0 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .movie-card {
+            margin: 0 0.5rem;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        
+        .movie-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+        
+        .movie-info {
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .movie-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .movie-director {
+            color: #777;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .movie-price {
+            font-weight: bold;
+            color: #e50914;
+        }
+        
+        .times-tickets-btn {
+            display: block;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 3px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        
+        .times-tickets-btn:hover {
+            background-color: #e50914;
+            text-decoration: none;
+            color: white;
+        }
+        
+        /* Experience Sections */
+        .experience-section {
+            margin-bottom: 3rem;
+        }
+        
+        .experience-title {
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+        
+        .experience-card {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 200px;
+            margin-bottom: 1rem;
+        }
+        
+        .experience-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .experience-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        
+        .experience-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        
+        .find-out-more {
+            background-color: black;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        /* Footer */
+        .cinema-footer {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .footer-title {
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .cinema-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .cinema-list li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .cinema-list a {
+            color: #aaa;
+            text-decoration: none;
+        }
+        
+        .cinema-list a:hover {
+            color: white;
+        }
+        
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        /* Search Box */
+        .search-container {
+            position: relative;
+            margin-right: 1rem;
+        }
+        
+        .search-box {
+            background-color: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            width: 200px;
+        }
+        
+        .search-box::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+        }
+        
+        /* Search Results */
+        .search-results {
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
 
-<!-- Main Grid Container -->
-<div class="row g-4 pb-3">
-    <!-- g-4 adds consistent gutter spacing -->
-    @foreach (var movie in Model)
-    {
-        <!-- Grid Column - responsive widths -->
-        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
-            <!-- Card Container -->
-            <div class="card shadow border-0 h-100 movie-card">
+<!-- Header & Navigation -->
+<header class="cinema-header">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+                <div class="cinema-logo">CINESNAP</div>
+            <div class="d-flex align-items-center">
+                <!-- Search Form -->
+                <form method="get" action="@Url.Action("Index", "Home")" class="search-container">
+                    <input type="text" name="searchTerm" class="search-box" placeholder="Search movies..." value="@ViewBag.CurrentSearchTerm">
+                    <button type="submit" class="search-btn">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+                
+                <!-- Cinema Selector -->
+                <div class="dropdown">
+                    <button class="btn btn-dark dropdown-toggle" type="button" id="cinemaDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select Cinema
+                    </button>
+                        <ul class="dropdown-menu" aria-labelledby="cinemaDropdown">
+                            <li><a class="dropdown-item" href="#" data-value="lower-hutt">Lower Hutt Cinema</a></li>
+                            <li><a class="dropdown-item" href="#" data-value="city-cbd">City CBD Cinema</a></li>
+                            <li><a class="dropdown-item" href="#" data-value="upper-hutt">Upper Hutt Cinema</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item clear-option" href="#" id="clearSelection">Clear Selection</a></li>
+                        </ul>
 
-                <!-- Movie Poster Image -->
-                <img src="@movie.ImageUrl"
-                     class="card-img-top movie-card-img"
-                     alt="@movie.Name poster">  
-                <!-- Card Content Area -->
-                <div class="card-body movie-card-body">
-                    <!-- Movie Title -->
-                    <h5 class="card-title text-dark text-center movie-title">@movie.Name</h5>
-                    <!-- Director -->
-                    <p class="text-muted text-center mb-2">by @movie.Director</p>
-
-                    <!-- Pricing Section -->
-                    <div class="movie-price">
-                        <!-- Original Price (strikethrough) -->
-                        <p class="text-center mb-1">
-                            <span class="text-decoration-line-through text-muted">
-                                @movie.ListPrice.ToString("c")  
-                            </span>
-                        </p>
-                        <!-- Discounted Price -->
-                        <p class="text-center fw-bold text-primary">
-                            As low as: @movie.Price10.ToString("c")
-                        </p>
-                    </div>
                 </div>
+                
+                <!-- Times & Tickets Button -->
+                <a href="#" class="btn btn-outline-light ms-3">Times & Tickets</a>
+            </div>
+        </div>
+    </div>
+</header>
 
-                <!-- Details Button -->
-                <div class="card-footer bg-transparent border-0 pb-3 pt-0">
-                    <a asp-action="Details"
-                       asp-route-movieId="@movie.Id"
-                       class="btn btn-primary w-100 py-2">
-                        DETAILS
-                    </a>
+
+<!-- Hero Carousel -->
+@if (firstMovie != null)
+{
+    var correctedUrl = firstMovie.ImageUrl.Replace("\\", "/");
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+                <div class="carousel-image" style="background-image: url('@correctedUrl'); height: 500px; background-size: cover; background-position: center;">
+                    <div style="display: none;">
+                        Debug: Image URL = @Html.Raw(firstMovie.ImageUrl)
+                    </div>
+                    <div class="hero-overlay">
+                    <h1 class="hero-title">@firstMovie.Name</h1>
+                    <p class="hero-subtitle">@firstMovie.Director</p>
+                    <a href="@Url.Action("Details", "Home", new { movieId = firstMovie.Id })" class="book-now-btn">Book Now</a>
                 </div>
             </div>
         </div>
-    }
+     </div>
+}
+
+<!-- Search Results Info (if search is active) -->
+@if (!string.IsNullOrEmpty(ViewBag.CurrentSearchTerm))
+{
+    <div class="container mt-4">
+        <div class="search-results">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-info-circle me-2"></i>
+                    Showing results for: <strong>"@ViewBag.CurrentSearchTerm"</strong> (@Model.Count() found)
+                </div>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-sm btn-outline-light">
+                    <i class="bi bi-x-circle me-1"></i> Clear
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Movie Categories -->
+<div class="movie-categories">
+    <div class="container">
+        <span class="category-title active">Now Showing</span>
+       @*  <span class="category-title">Coming Soon</span> *@
+    </div>
 </div>
+
+<!-- Movie Listings -->
+<div class="container">
+    <div class="row">
+        @foreach (var movie in Model)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="movie-card shadow">
+                    <img src="@movie.ImageUrl" class="movie-poster" alt="@movie.Name poster">
+                    <div class="movie-info">
+                        <h5 class="movie-title">@movie.Name</h5>
+                        <p class="movie-director">by @movie.Director</p>
+                        <p class="movie-price">@movie.Price.ToString("c")</p>
+                            <a href="@Url.Action("Details", "Home", new { movieId = movie.Id })" class="times-tickets-btn">
+                            Times & Tickets
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Experience Section -->
+<section class="experience-section">
+    <div class="container">
+            <h2 class="experience-title">Experience CINESNAP Cinemas</h2>
+        <div class="row">
+            <!-- Luxury Experience -->
+            <div class="col-md-3">
+                <div class="experience-card">
+                    <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="experience-img" alt="Luxury Cinema">
+                    <div class="experience-overlay">
+                        <div class="experience-name">Gold Class</div>
+                        <button class="find-out-more">Find out more</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Designer Experience -->
+            <div class="col-md-3">
+                <div class="experience-card">
+                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="experience-img" alt="Designer Cinema">
+                    <div class="experience-overlay">
+                        <div class="experience-name">Boutique</div>
+                        <button class="find-out-more">Find out more</button>
+                    </div>
+                </div>
+            </div>
+            <!-- V-Max Experience -->
+            <div class="col-md-3">
+                <div class="experience-card">
+                    <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="experience-img" alt="V-Max Cinema">
+                    <div class="experience-overlay">
+                        <div class="experience-name">V-Max</div>
+                        <button class="find-out-more">Find out more</button>
+                    </div>
+                </div>
+            </div>
+            <!-- IMAX Experience -->
+            <div class="col-md-3">
+                <div class="experience-card">
+                    <img src="https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="experience-img" alt="IMAX Cinema">
+                    <div class="experience-overlay">
+                        <div class="experience-name">IMAX</div>
+                        <button class="find-out-more">Find out more</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="cinema-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h4 class="footer-title">Our Cinemas</h4>
+                <ul class="cinema-list">
+                    <li><a href="#">Downtown</a></li>
+                    <li><a href="#">Lower Hutt Cinema</a></li>
+                    <li><a href="#">Central City</a></li>
+                    <li><a href="#">Upper Hutt Cinema</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h4 class="footer-title">Quick Links</h4>
+                <ul class="cinema-list">
+                    <li><a href="#">Now Showing</a></li>
+                    <li><a href="#">Coming Soon</a></li>
+                    <li><a href="#">Experiences</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h4 class="footer-title">Connect With Us</h4>
+                <div class="social-icons mb-3">
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-twitter"></i></a>
+                    <a href="#"><i class="bi bi-youtube"></i></a>
+                </div>
+                <p>Download our mobile app:</p>
+                <div class="d-flex">
+                    <a href="#" class="me-2"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" width="120"></a>
+                    <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" width="120"></a>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+</footer>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        $('.dropdown-item').on('click', function(e) {
+            e.preventDefault(); 
+            // get text 
+            var selectedText = $(this).text();
+            // update display
+            $('#cinemaDropdown').text(selectedText);
+
+        });
+        //clear dropdown
+        $('#clearSelection').on('click', function(e) {
+            e.preventDefault();
+            $('#cinemaDropdown').text('Select Cinema');
+
+            $('#selectedCinema').val('');
+        });
+    });
+</script>

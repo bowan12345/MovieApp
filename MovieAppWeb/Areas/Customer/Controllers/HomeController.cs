@@ -22,9 +22,25 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string searchTerm)
         {
+            /*IEnumerable<Movie> movieList = _unitOfWork.movieRepository.GetAll(includeProperties: "Category");
+            return View(movieList);*/
+            // Store the search term in ViewBag for display in the view
+            ViewBag.CurrentSearchTerm = searchTerm;
+
+            // Create a query that we can build upon
             IEnumerable<Movie> movieList = _unitOfWork.movieRepository.GetAll(includeProperties: "Category");
+
+            // Apply search filter if a search term is provided
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                // Search by movie name 
+                movieList = movieList.Where(m => m.Name.ToLower().Contains(searchTerm.ToLower()) ||
+                                        (m.Director != null && m.Director.ToLower().Contains(searchTerm.ToLower())) ||
+                                        (m.Description != null && m.Description.ToLower().Contains(searchTerm.ToLower())));
+            }
+
             return View(movieList);
         }
 

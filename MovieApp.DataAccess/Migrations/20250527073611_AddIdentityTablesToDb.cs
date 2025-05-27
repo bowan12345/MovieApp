@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MovieApp.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class AddMovieVoteTable : Migration
+    public partial class AddIdentityTablesToDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -252,12 +252,6 @@ namespace MovieApp.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_MovieVotes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MovieVotes_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_MovieVotes_Movies_MovieId",
                         column: x => x.MovieId,
                         principalTable: "Movies",
@@ -391,15 +385,9 @@ namespace MovieApp.DataAccess.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MovieVotes_MovieId_UserId",
+                name: "IX_MovieVotes_MovieId",
                 table: "MovieVotes",
-                columns: new[] { "MovieId", "UserId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MovieVotes_UserId",
-                table: "MovieVotes",
-                column: "UserId");
+                column: "MovieId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderDetails_MovieId",

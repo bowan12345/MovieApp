@@ -501,11 +501,7 @@ namespace MovieApp.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("MovieId", "UserId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_MovieVotes_MovieId_UserId");
+                    b.HasIndex("MovieId");
 
                     b.ToTable("MovieVotes");
                 });
@@ -700,12 +696,6 @@ namespace MovieApp.DataAccess.Migrations
                     b.HasOne("MovieApp.Models.Movie", null)
                         .WithMany("MovieVotes")
                         .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MovieApp.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
