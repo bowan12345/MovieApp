@@ -24,8 +24,6 @@ namespace MovieAppWeb.Areas.Customer.Controllers
 
         public IActionResult Index(string searchTerm)
         {
-            /*IEnumerable<Movie> movieList = _unitOfWork.movieRepository.GetAll(includeProperties: "Category");
-            return View(movieList);*/
             // Store the search term in ViewBag for display in the view
             ViewBag.CurrentSearchTerm = searchTerm;
 
@@ -74,7 +72,19 @@ namespace MovieAppWeb.Areas.Customer.Controllers
                 if (userId != null)
                 {
                     var userVote = _unitOfWork.movieVoteRepository.GetUserVoteForMovie(movieId, userId);
-                    ViewBag.UserVote = userVote?.IsLike; // null if no vote, true if like, false if dislike
+                    // null if no vote, true if like, false if dislike
+                    if (userVote == null)
+                    {
+                        ViewBag.UserVote = "none"; 
+                    }
+                    else if (userVote.IsLike)
+                    {
+                        ViewBag.UserVote = "like";
+                    }
+                    else
+                    {
+                        ViewBag.UserVote = "dislike";
+                    } 
                 }
             }
 

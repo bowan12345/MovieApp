@@ -4,7 +4,7 @@
 <form method="post">
     <div class="card shadow border-0 mt-4">
         <!-- Card Header with Movie Title -->
-        <div class="card-header bg-dark bg-gradient text-light py-4">
+        <div class="card-header bg-primary bg-gradient text-light py-4">
             <div class="row align-items-center">
                 <div class="col">
                     <h2 class="text-light mb-0">@Model.Movie.Name</h2>
@@ -183,15 +183,26 @@
     <!-- Hidden Fields -->
     <input hidden asp-for="MovieId" />
 </form>
-
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
     // Set initial button states based on user's vote
-    document.addEventListener('DOMContentLoaded', function() {
+   $(document).ready(function () {
     @if (User.Identity.IsAuthenticated && ViewBag.UserVote != null)
     {
         <text>
-                var userVote = @Json.Serialize(ViewBag.UserVote);
-                updateButtonStates(userVote);
+            var userVote = "@ViewBag.UserVote"; // like / dislike / none
+            switch (userVote) {
+            case "like":
+                updateButtonStates(true);
+                break;
+            case "dislike":
+                updateButtonStates(false);
+                break;
+            case "none":
+            default:
+                updateButtonStates(null);
+                break;
+            }
         </text>
     }
     });
@@ -256,7 +267,11 @@
             likeBtn.className = 'btn btn-success d-flex align-items-center gap-2';
         } else if (userVote === false) {
             dislikeBtn.className = 'btn btn-danger d-flex align-items-center gap-2';
-        }
+        }else {
+        // clear all styles
+        $("#likeBtn").removeClass("btn-success");
+        $("#dislikeBtn").removeClass("btn-danger");
+    }
     }
 
     function showVoteMessage(message, type) {
