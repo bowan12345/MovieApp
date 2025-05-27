@@ -1,5 +1,8 @@
 ﻿@model ShoppingCart
 
+<!-- Add Bootstrap Icons CDN in your layout or here -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
 <!-- Main Form Container -->
 <form method="post">
     <div class="card shadow border-0 mt-4">
@@ -144,69 +147,175 @@
                 </div>
             </div>
 
-            <!-- Purchase Section -->
+            <!-- Enhanced Ticket Purchase Section -->
             <div class="row mt-4">
                 <div class="col-12">
-                    <div class="card border-0 shadow-sm p-3 rounded-3">
-                        <h5 class="mb-3 text-primary">
-                            <i class="bi bi-ticket-perforated"></i> Get Your Tickets
-                        </h5>
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h4 class="text-primary mb-4">
+                                <i class="bi bi-ticket-perforated"></i> Get Your Tickets
+                            </h4>
 
-                        <div class="bg-primary text-white rounded-3 p-0 overflow-hidden">
-                            <div class="row g-0 align-items-center">
-                                <!-- Ticket Quantity Selector -->
-                                <div class="col-12 col-md-4">
-                                    <div class="py-3 px-4 border-end border-light-subtle">
-                                        <label asp-for="Count" class="form-label fw-bold mb-2">Number of Tickets</label>
-                                        <div class="input-group input-group-lg">
-                                            <button type="button" class="btn btn-light" onclick="adjustTicketCount(-1)">
-                                                <i class="bi bi-dash"></i>
-                                            </button>
-                                            <input asp-for="Count" class="form-control text-center fw-semibold" min="1" max="50" value="1" />
-                                            <button type="button" class="btn btn-light" onclick="adjustTicketCount(1)">
-                                                <i class="bi bi-plus"></i>
-                                            </button>
+                            <!-- Ticket Types -->
+                            <div class="ticket-types">
+                                <!-- Adult Tickets -->
+                                <div class="ticket-type mb-3 p-3 rounded-3 border border-primary" style="background: rgba(13, 110, 253, 0.05); transition: all 0.3s ease;">
+                                    <div class="row align-items-center">
+                                        <div class="col-12 col-md-4">
+                                            <div class="ticket-info">
+                                                <h5 class="mb-1 text-primary">
+                                                    <i class="bi bi-person-fill me-2"></i>Adult
+                                                </h5>
+                                                <p class="text-muted mb-0 small">Ages 18-64</p>
+                                            </div>
                                         </div>
-                                        <span asp-validation-for="Count" class="text-warning small mt-1"></span>
-                                    </div>
-                                </div>
-
-                                <!-- Price Display -->
-                                <div class="col-12 col-md-4">
-                                    <div class="py-3 px-4 h-100 border-end border-light-subtle">
-                                        <div class="d-flex flex-column justify-content-center h-100">
-                                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                                <span class="fw-bold">Total Price:</span>
-                                                <span class="fs-4 fw-bold text-white" id="totalPrice">$@Model.Movie.Price.ToString("0.00")</span>
+                                        <div class="col-12 col-md-3 text-center">
+                                            <div class="ticket-price">
+                                                <span class="fs-5 fw-bold text-primary">$@Model.Movie.Price.ToString("0.00")</span>
                                             </div>
-                                            <div class="price-tiers small text-white-50">
-                                                <div class="d-flex justify-content-between">
-                                                    <span>1-5 tickets:</span>
-                                                    <span>$@Model.Movie.Price.ToString("0.00") each</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>6-10 tickets:</span>
-                                                    <span>$@Model.Movie.Price5.ToString("0.00") each</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>10+ tickets:</span>
-                                                    <span>$@Model.Movie.Price10.ToString("0.00") each</span>
-                                                </div>
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <div class="quantity-selector d-flex align-items-center justify-content-center">
+                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeTicketQuantity('adult', -1)">
+                                                    <i class="bi bi-dash"></i>
+                                                </button>
+                                                <span class="mx-3 fw-semibold" id="adult-qty">0</span>
+                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeTicketQuantity('adult', 1)">
+                                                    <i class="bi bi-plus"></i>
+                                                </button>
                                             </div>
+                                        </div>
+                                        <div class="col-12 col-md-2 text-end">
+                                            <div class="subtotal fw-bold text-primary" id="adult-subtotal">$0.00</div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Add to Cart Button -->
-                                <div class="col-12 col-md-4">
-                                    <div class="py-3 px-4 h-100">
-                                        <button type="submit" class="btn btn-light w-100 py-3 fw-bold text-primary">
-                                            <i class="bi bi-cart-plus me-2"></i> Add to Cart
-                                        </button>
+                                <!-- Child Tickets -->
+                                <div class="ticket-type mb-3 p-3 rounded-3 border border-success" style="background: rgba(25, 135, 84, 0.05); transition: all 0.3s ease;">
+                                    <div class="row align-items-center">
+                                        <div class="col-12 col-md-4">
+                                            <div class="ticket-info">
+                                                <h5 class="mb-1 text-success">
+                                                    <i class="bi bi-person-hearts me-2"></i>Children
+                                                </h5>
+                                                <p class="text-muted mb-0 small">Ages 3-12</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3 text-center">
+                                            <div class="ticket-price">
+                                                <span class="fs-5 fw-bold text-success">$@((Model.Movie.Price * 0.7).ToString("0.00"))</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <div class="quantity-selector d-flex align-items-center justify-content-center">
+                                                <button type="button" class="btn btn-outline-success btn-sm" onclick="changeTicketQuantity('child', -1)">
+                                                    <i class="bi bi-dash"></i>
+                                                </button>
+                                                <span class="mx-3 fw-semibold" id="child-qty">0</span>
+                                                <button type="button" class="btn btn-outline-success btn-sm" onclick="changeTicketQuantity('child', 1)">
+                                                    <i class="bi bi-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-2 text-end">
+                                            <div class="subtotal fw-bold text-success" id="child-subtotal">$0.00</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Senior Tickets -->
+                                <div class="ticket-type mb-3 p-3 rounded-3 border border-info" style="background: rgba(13, 202, 240, 0.05); transition: all 0.3s ease;">
+                                    <div class="row align-items-center">
+                                        <div class="col-12 col-md-4">
+                                            <div class="ticket-info">
+                                                <h5 class="mb-1 text-info">
+                                                    <i class="bi bi-person-walking me-2"></i>Seniors
+                                                </h5>
+                                                <p class="text-muted mb-0 small">Ages 65+</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3 text-center">
+                                            <div class="ticket-price">
+                                                <span class="fs-5 fw-bold text-info">$@((Model.Movie.Price * 0.8).ToString("0.00"))</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <div class="quantity-selector d-flex align-items-center justify-content-center">
+                                                <button type="button" class="btn btn-outline-info btn-sm" onclick="changeTicketQuantity('senior', -1)">
+                                                    <i class="bi bi-dash"></i>
+                                                </button>
+                                                <span class="mx-3 fw-semibold" id="senior-qty">0</span>
+                                                <button type="button" class="btn btn-outline-info btn-sm" onclick="changeTicketQuantity('senior', 1)">
+                                                    <i class="bi bi-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-2 text-end">
+                                            <div class="subtotal fw-bold text-info" id="senior-subtotal">$0.00</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Student Tickets -->
+                                <div class="ticket-type mb-4 p-3 rounded-3 border border-warning" style="background: rgba(255, 193, 7, 0.05); transition: all 0.3s ease;">
+                                    <div class="row align-items-center">
+                                        <div class="col-12 col-md-4">
+                                            <div class="ticket-info">
+                                                <h5 class="mb-1 text-warning">
+                                                    <i class="bi bi-mortarboard-fill me-2"></i>Students
+                                                </h5>
+                                                <p class="text-muted mb-0 small">Valid student ID required</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3 text-center">
+                                            <div class="ticket-price">
+                                                <span class="fs-5 fw-bold text-warning">$@((Model.Movie.Price * 0.75).ToString("0.00"))</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <div class="quantity-selector d-flex align-items-center justify-content-center">
+                                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="changeTicketQuantity('student', -1)">
+                                                    <i class="bi bi-dash"></i>
+                                                </button>
+                                                <span class="mx-3 fw-semibold" id="student-qty">0</span>
+                                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="changeTicketQuantity('student', 1)">
+                                                    <i class="bi bi-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-2 text-end">
+                                            <div class="subtotal fw-bold text-warning" id="student-subtotal">$0.00</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+
+                            <!-- Summary Section -->
+                            <div class="summary-section bg-primary text-white p-4 rounded-3">
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-md-4">
+                                        <div class="summary-info">
+                                            <h6 class="mb-2">Order Summary</h6>
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span>Total Tickets:</span>
+                                                <span class="fw-bold" id="total-tickets">0</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Total Price:</span>
+                                                <span class="fs-4 fw-bold" id="total-price">$0.00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-8">
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-light btn-lg px-5 py-3 fw-bold text-primary" id="add-to-cart-btn" disabled>
+                                                <i class="bi bi-cart-plus me-2"></i> Add to Cart
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -214,33 +323,113 @@
         </div>
     </div>
 
-    <!-- Hidden Fields -->
+    <!-- Hidden Fields for Form Submission -->
     <input hidden asp-for="MovieId" />
+    <input hidden asp-for="Count" id="hidden-count" />
+    <input type="hidden" name="AdultTickets" id="adult-tickets" value="0" />
+    <input type="hidden" name="ChildTickets" id="child-tickets" value="0" />
+    <input type="hidden" name="SeniorTickets" id="senior-tickets" value="0" />
+    <input type="hidden" name="StudentTickets" id="student-tickets" value="0" />
 </form>
+
+<style>
+    .ticket-type:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    }
+
+    .quantity-selector button:hover {
+        transform: scale(1.1);
+    }
+
+    .summary-section {
+        background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
+    }
+
+    
+</style>
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
+    // Ticket pricing and quantities
+    const ticketPrices = {
+        adult: @Model.Movie.Price,
+        child: @(Model.Movie.Price * 0.7),
+        senior: @(Model.Movie.Price * 0.8),
+        student: @(Model.Movie.Price * 0.75)
+    };
+
+    let ticketQuantities = {
+        adult: 0,
+        child: 0,
+        senior: 0,
+        student: 0
+    };
+
     // Set initial button states based on user's vote
-   $(document).ready(function () {
+    $(document).ready(function () {
     @if (User.Identity.IsAuthenticated && ViewBag.UserVote != null)
     {
         <text>
-            var userVote = "@ViewBag.UserVote"; // like / dislike / none
-            switch (userVote) {
-            case "like":
-                updateButtonStates(true);
-                break;
-            case "dislike":
-                updateButtonStates(false);
-                break;
-            case "none":
-            default:
-                updateButtonStates(null);
-                break;
-            }
+                    var userVote = "@ViewBag.UserVote"; // like / dislike / none
+                    switch (userVote) {
+                    case "like":
+                        updateButtonStates(true);
+                        break;
+                    case "dislike":
+                        updateButtonStates(false);
+                        break;
+                    case "none":
+                    default:
+                        updateButtonStates(null);
+                        break;
+                    }
         </text>
     }
+        updateTicketDisplay();
     });
 
+    function changeTicketQuantity(type, change) {
+        const newQuantity = ticketQuantities[type] + change;
+        if (newQuantity >= 0 && newQuantity <= 20) {
+            ticketQuantities[type] = newQuantity;
+            updateTicketDisplay();
+        }
+    }
+
+    function updateTicketDisplay() {
+        let totalTickets = 0;
+        let totalPrice = 0;
+
+        // Update each ticket type display
+        Object.keys(ticketQuantities).forEach(type => {
+            const qty = ticketQuantities[type];
+            const price = ticketPrices[type];
+            const subtotal = qty * price;
+
+            document.getElementById(`${type}-qty`).textContent = qty;
+            document.getElementById(`${type}-subtotal`).textContent = `$${subtotal.toFixed(2)}`;
+
+            // Update hidden form fields
+            document.getElementById(`${type}-tickets`).value = qty;
+
+            totalTickets += qty;
+            totalPrice += subtotal;
+        });
+
+        // Update totals
+        document.getElementById('total-tickets').textContent = totalTickets;
+        document.getElementById('total-price').textContent = `$${totalPrice.toFixed(2)}`;
+
+        // Update hidden count field for backwards compatibility
+        document.getElementById('hidden-count').value = totalTickets;
+
+        // Enable/disable add to cart button
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        addToCartBtn.disabled = totalTickets === 0;
+    }
+
+    // Voting functions (unchanged)
     function voteMovie(movieId, isLike) {
         var url = isLike ? '/Customer/Home/LikeMovie' : '/Customer/Home/DislikeMovie';
 
@@ -301,11 +490,11 @@
             likeBtn.className = 'btn btn-success d-flex align-items-center gap-2';
         } else if (userVote === false) {
             dislikeBtn.className = 'btn btn-danger d-flex align-items-center gap-2';
-        }else {
-        // clear all styles
-        $("#likeBtn").removeClass("btn-success");
-        $("#dislikeBtn").removeClass("btn-danger");
-    }
+        } else {
+            // clear all styles
+            $("#likeBtn").removeClass("btn-success");
+            $("#dislikeBtn").removeClass("btn-danger");
+        }
     }
 
     function showVoteMessage(message, type) {
@@ -318,39 +507,5 @@
         setTimeout(() => {
             messageDiv.classList.add('d-none');
         }, 3000);
-    }
-
-    // Update total price based on ticket count
-    document.querySelector('input[name="Count"]').addEventListener('input', function() {
-        var count = parseInt(this.value) || 0;
-        var price = @Model.Movie.Price;
-        var price5 = @Model.Movie.Price5;
-        var price10 = @Model.Movie.Price10;
-
-        var totalPrice;
-        if (count >= 10) {
-            totalPrice = count * price10;
-        } else if (count >= 6) {
-            totalPrice = count * price5;
-        } else {
-            totalPrice = count * price;
-        }
-
-        document.getElementById('totalPrice').textContent = '$' + totalPrice.toFixed(2);
-    });
-
-
-    function adjustTicketCount(change) {
-        const input = document.querySelector('input[name="Count"]');
-        let value = parseInt(input.value) || 1;
-        value += change;
-    
-        if (value < 1) value = 1;
-        if (value > 50) value = 50;
-    
-        input.value = value;
-    
-        const event = new Event('input');
-        input.dispatchEvent(event);
     }
 </script>
