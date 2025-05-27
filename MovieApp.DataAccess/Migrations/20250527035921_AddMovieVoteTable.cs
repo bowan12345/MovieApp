@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MovieApp.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class addIdentityTables : Migration
+    public partial class AddMovieVoteTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -180,6 +180,33 @@ namespace MovieApp.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OrderHeaders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OrderTotal = table.Column<double>(type: "float", nullable: false),
+                    OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SessionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PaymentIntentId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderHeaders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderHeaders_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Movies",
                 columns: table => new
                 {
@@ -190,6 +217,7 @@ namespace MovieApp.DataAccess.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Duration = table.Column<int>(type: "int", nullable: false),
                     Rating = table.Column<double>(type: "float", nullable: false),
+                    ReleaseYear = table.Column<int>(type: "int", nullable: false),
                     ListPrice = table.Column<double>(type: "float", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
                     Price5 = table.Column<double>(type: "float", nullable: false),
@@ -209,6 +237,89 @@ namespace MovieApp.DataAccess.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MovieVotes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MovieId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    IsLike = table.Column<bool>(type: "bit", nullable: false),
+                    VotedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MovieVotes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MovieVotes_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MovieVotes_Movies_MovieId",
+                        column: x => x.MovieId,
+                        principalTable: "Movies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderHeaderId = table.Column<int>(type: "int", nullable: false),
+                    MovieId = table.Column<int>(type: "int", nullable: false),
+                    Count = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderDetails_Movies_MovieId",
+                        column: x => x.MovieId,
+                        principalTable: "Movies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderDetails_OrderHeaders_OrderHeaderId",
+                        column: x => x.OrderHeaderId,
+                        principalTable: "OrderHeaders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShoppingCarts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MovieId = table.Column<int>(type: "int", nullable: false),
+                    Count = table.Column<int>(type: "int", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShoppingCarts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ShoppingCarts_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ShoppingCarts_Movies_MovieId",
+                        column: x => x.MovieId,
+                        principalTable: "Movies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Categories",
                 columns: new[] { "Id", "Description", "DisplayOrder", "Name" },
@@ -222,14 +333,17 @@ namespace MovieApp.DataAccess.Migrations
 
             migrationBuilder.InsertData(
                 table: "Movies",
-                columns: new[] { "Id", "CategoryId", "Description", "Director", "Duration", "ImageUrl", "ListPrice", "Name", "Price", "Price10", "Price5", "Rating", "YoutubeId" },
+                columns: new[] { "Id", "CategoryId", "Description", "Director", "Duration", "ImageUrl", "ListPrice", "Name", "Price", "Price10", "Price5", "Rating", "ReleaseYear", "YoutubeId" },
                 values: new object[,]
                 {
-                    { 1, 1, "A thrilling journey through uncharted lands.", "John Smith", 130, "", 29.989999999999998, "The Great Adventure", 24.989999999999998, 19.989999999999998, 22.989999999999998, 8.1999999999999993, "" },
-                    { 2, 2, "A heartfelt romantic story set in Paris.", "Emily Johnson", 115, "", 24.989999999999998, "Love in Paris", 19.989999999999998, 15.99, 17.989999999999998, 7.5, "" },
-                    { 3, 3, "Comedy that will leave you in stitches.", "Mike Chang", 98, "", 19.989999999999998, "The Laugh Factory", 15.99, 11.99, 13.99, 7.7999999999999998, "" },
-                    { 4, 4, "A science fiction epic exploring distant galaxies.", "Samantha Lee", 145, "", 34.990000000000002, "Beyond the Stars", 28.989999999999998, 23.989999999999998, 26.989999999999998, 8.5999999999999996, "" },
-                    { 5, 1, "A chilling horror story that will keep you up at night.", "Richard Black", 105, "", 22.989999999999998, "Haunted Echoes", 18.989999999999998, 14.99, 16.989999999999998, 6.9000000000000004, "" }
+                    { 1, 4, "This mind-bending sci-fi thriller follows a skilled thief, Dom Cobb, who is able to steal secrets from within a person's subconscious while they dream", "Christopher Nolan", 130, "\\images\\movie\\824295b2-2fa4-48e1-9055-5fb63b9b1ddf.jpg", 29.989999999999998, "Inception", 24.989999999999998, 19.989999999999998, 22.989999999999998, 8.1999999999999993, 2010, "YoHD9XEInc0" },
+                    { 2, 3, "A heartfelt romantic story set in Paris.", "Emily Johnson", 115, "\\images\\movie\\83309ec0-a276-48d3-b673-bcbe55030fc3.jpg", 24.989999999999998, "Love in Paris", 19.989999999999998, 15.99, 17.989999999999998, 7.5, 1997, "lhMcYv0PG6o" },
+                    { 3, 1, "The second installment of Nolan’s Batman trilogy, this film follows Batman as he faces off against the Joker,", "Christopher Nolan", 98, "\\images\\movie\\826c3850-f961-4b14-b8af-9c731ea8807f.jpg", 19.989999999999998, "The Dark Knight", 15.99, 11.99, 13.99, 7.7999999999999998, 2008, "EXeTwQWrcwY" },
+                    { 4, 4, "A science fiction epic exploring distant galaxies.", "Samantha Lee", 145, "\\images\\movie\\0ff60068-9f54-440a-be9a-c26c6ed64469.jpg", 34.990000000000002, "Beyond the Stars", 28.989999999999998, 23.989999999999998, 26.989999999999998, 8.5999999999999996, 1989, "2t7z_44nGio" },
+                    { 5, 1, "Based on Chuck Palahniuk's novel, Fight Club follows an unnamed protagonist who, disillusioned with his mundane life, meets the charismatic Tyler Durden", "David Fincher", 105, "\\images\\movie\\056287bf-89af-4ed0-bc8e-3b4a2f1ed642.jpg", 22.989999999999998, "Fight Club", 18.989999999999998, 14.99, 16.989999999999998, 6.9000000000000004, 1999, "qtRKdVHc-cE" },
+                    { 6, 1, "Banker Andy Dufresne is wrongfully imprisoned and befriends fellow inmate Red at Shawshank prison. ", "Frank Darabont", 142, "\\images\\movie\\a42862fb-73a9-40bd-aa10-472af8477d64.jpg", 22.989999999999998, "The Shawshank Redemption", 18.989999999999998, 14.99, 16.989999999999998, 6.9000000000000004, 1994, "PLl99DlL6b4" },
+                    { 7, 1, "Neo, a computer hacker, discovers that the world he lives in is a simulated reality controlled by machines.", "The Wachowskisr", 136, "\\images\\movie\\677d1b65-0a3d-4427-9b44-be008bc678e5.jpg", 22.989999999999998, "The Matrix", 18.989999999999998, 14.99, 16.989999999999998, 6.9000000000000004, 1999, "vKQi3bBA1y8" },
+                    { 8, 1, "The powerful and influential Corleone mafia family is headed by Don Vito Corleone, whose youngest son Michael gradually gets drawn into the family business.", "Francis Ford Coppola", 175, "\\images\\movie\\af91e03f-a44a-4545-9d04-d9ae1c138eba.jpg", 22.989999999999998, "The Godfather", 18.989999999999998, 14.99, 16.989999999999998, 6.9000000000000004, 1972, "UaVTIH8mujA" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -275,6 +389,42 @@ namespace MovieApp.DataAccess.Migrations
                 name: "IX_Movies_CategoryId",
                 table: "Movies",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MovieVotes_MovieId_UserId",
+                table: "MovieVotes",
+                columns: new[] { "MovieId", "UserId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MovieVotes_UserId",
+                table: "MovieVotes",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDetails_MovieId",
+                table: "OrderDetails",
+                column: "MovieId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderDetails_OrderHeaderId",
+                table: "OrderDetails",
+                column: "OrderHeaderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderHeaders_ApplicationUserId",
+                table: "OrderHeaders",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShoppingCarts_ApplicationUserId",
+                table: "ShoppingCarts",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShoppingCarts_MovieId",
+                table: "ShoppingCarts",
+                column: "MovieId");
         }
 
         /// <inheritdoc />
@@ -296,10 +446,22 @@ namespace MovieApp.DataAccess.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Movies");
+                name: "MovieVotes");
+
+            migrationBuilder.DropTable(
+                name: "OrderDetails");
+
+            migrationBuilder.DropTable(
+                name: "ShoppingCarts");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "OrderHeaders");
+
+            migrationBuilder.DropTable(
+                name: "Movies");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

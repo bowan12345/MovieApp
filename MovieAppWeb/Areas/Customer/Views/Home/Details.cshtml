@@ -1,127 +1,177 @@
 ﻿@model ShoppingCart
+
 <!-- Main Form Container -->
 <form method="post">
     <div class="card shadow border-0 mt-4">
         <!-- Card Header with Movie Title -->
         <div class="card-header bg-dark bg-gradient text-light py-4">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <h3 class="text-white text-uppercase">@Model.Movie.Name</h3>
-                    <p class="text-white-50 fw-semibold mb-0">by @Model.Movie.Director</p>
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="text-light mb-0">@Model.Movie.Name</h2>
+                    <p class="mb-0 text-light opacity-75">Directed by @Model.Movie.Director</p>
+                </div>
+                <div class="col-auto">
+                    <span class="badge bg-warning text-dark fs-6">@Model.Movie.Rating ⭐</span>
                 </div>
             </div>
         </div>
 
-        <!-- Card Body - Main Content -->
+        <!-- Card Body -->
         <div class="card-body">
-            <div class="py-3">
-                <!-- Back Button Row -->
-                <div class="row">
-                    <div class="col-6 col-md-2 pb-1">
-                        <a asp-action="Index" class="btn btn-outline-primary bg-gradient mb-5 fw-semibold btn-sm text-uppercase">
-                            <medium><strong>Back to home</strong></medium>
-                        </a>
+            <div class="row">
+                <!-- Movie Image -->
+                <div class="col-12 col-lg-3 pb-5">
+                    <div class="text-center">
+                        <img src="@Model.Movie.ImageUrl" class="card-img-top rounded shadow" alt="@Model.Movie.Name" style="max-height: 400px; object-fit: cover;">
                     </div>
                 </div>
 
-                <!-- Main Content Row -->
-                <div class="row">
-                    <!-- Left Column - Large Movie Poster -->
-                    <div class="col-12 col-lg-6 pe-lg-4">
-                        <img src="@Model.Movie.ImageUrl" class="rounded shadow w-100"
-                             style="max-height: 600px; object-fit: contain;"
-                             alt="@Model.Movie.Name movie poster" />
-                    </div>
+                <!-- Movie Details -->
+                <div class="col-12 col-lg-9">
+                    <div class="row">
+                        <!-- Movie Information -->
+                        <div class="col-12 col-md-8">
+                            <div class="movie-info mb-4">
+                                <h4 class="text-primary mb-3">Movie Information</h4>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><strong>Category:</strong> <span class="badge bg-secondary">@Model.Movie.Category.Name</span></li>
+                                    <li class="mb-2"><strong>Duration:</strong> @Model.Movie.Duration minutes</li>
+                                    <li class="mb-2"><strong>Release Year:</strong> @Model.Movie.ReleaseYear</li>
+                                    <li class="mb-2"><strong>Rating:</strong> @Model.Movie.Rating/10</li>
+                                </ul>
 
-                    <!-- Right Column - Trailer and Purchase Info -->
-                    <div class="col-12 col-lg-6">
-                        <!-- Top Section - Trailer -->
-                        <div class="mb-4">
-                            @if (!string.IsNullOrEmpty(Model.Movie.YoutubeId))
-                            {
-                                <h4 class="mb-3">
-                                    <i class="bi bi-play-circle-fill me-2"></i>Official Trailer
-                                </h4>
-                                <div class="ratio ratio-16x9 shadow mb-3">
-                                    <iframe src="https://www.youtube.com/embed/@Model.Movie.YoutubeId?rel=0"
-                                            title="@Model.Movie.Name official trailer"
-                                            frameborder="0"
-                                            allowfullscreen></iframe>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="badge bg-secondary">YOUTUBE</span>
-                                </div>
-                            }
-                        </div>
-
-                        <!-- Middle Section - Purchase Info -->
-                        <div class="card shadow-sm mb-4">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="badge bg-primary">@Model.Movie.Category.Name</span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <h6 class="text-dark text-opacity-50 mb-1">RATING: <strong>@Model.Movie.Rating</strong></h6>
-                                    <h6 class="text-dark text-opacity-50">
-                                        LIST PRICE:
-                                        <span class="text-decoration-line-through">
-                                            @Model.Movie.ListPrice.ToString("c")
-                                        </span>
-                                    </h6>
-                                </div>
-
-                                <div class="p-3 bg-light rounded mb-3">
-                                    <div class="row text-center">
-                                        <!-- Quantity headers -->
-                                        <div class="col-3">
-                                            <div class="fw-bold text-nowrap">Number of Tickets:</div>
-                                        </div>
-                                        <div class="col-3">
-                                            <div class="text-secondary fw-bold">1-5<i class="bi bi-ticket-perforated"></i></div>
-                                        </div>
-                                        <div class="col-3">
-                                            <div class="text-secondary fw-bold">6-10<i class="bi bi-ticket-perforated"></i></div>
-                                        </div>
-                                        <div class="col-3">
-                                            <div class="text-secondary fw-bold">10+<i class="bi bi-ticket-perforated"></i></div>
-                                        </div>
+                                @if (!string.IsNullOrEmpty(Model.Movie.Description))
+                                {
+                                    <div class="mt-3">
+                                        <h5>Description</h5>
+                                        <p class="text-muted">@Model.Movie.Description</p>
                                     </div>
-                                    <div class="row text-center">
-                                        <!-- Price values -->
-                                        <div class="col-3">
-                                            <div class="fw-bold">Price:</div>
-                                        </div>
-                                        <div class="col-3">
-                                            <div class="text-success fw-bold">@Model.Movie.Price.ToString("c")</div>
-                                        </div>
-                                        <div class="col-3">
-                                            <div class="text-success fw-bold">@Model.Movie.Price5.ToString("c")</div>
-                                        </div>
-                                        <div class="col-3">
-                                            <div class="text-success fw-bold">@Model.Movie.Price10.ToString("c")</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text bg-primary text-white">Count</span>
-                                    <input asp-for="Count"  type="number" value="1" class="form-control text-end"
-                                           aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
-                                </div>
-
-                                <button type="submit" 
-                                        class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
-                                    ADD TO CART 
-                                </button>
+                                }
                             </div>
                         </div>
 
-                        <!-- Bottom Section - Description -->
-                        <div class="card shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title">About the Movie</h5>
-                                <p class="card-text text-secondary">@Html.Raw(Model.Movie.Description)</p>
+                        <!-- Pricing Information -->
+                        <div class="col-12 col-md-4">
+                            <div class="pricing-card bg-light p-3 rounded shadow-sm">
+                                <h5 class="text-center mb-3">Ticket Pricing</h5>
+                                <ul class="list-unstyled text-center">
+                                    <li class="mb-2">
+                                        <strong>1-5 tickets:</strong>
+                                        <span class="text-success fs-5">$@Model.Movie.Price.ToString("0.00")</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>6-10 tickets:</strong>
+                                        <span class="text-success fs-5">$@Model.Movie.Price5.ToString("0.00")</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>10+ tickets:</strong>
+                                        <span class="text-success fs-5">$@Model.Movie.Price10.ToString("0.00")</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Movie Trailer Section -->
+            @if (!string.IsNullOrEmpty(Model.Movie.YoutubeId))
+            {
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="trailer-section">
+                            <h4 class="text-primary mb-3">
+                                <i class="bi bi-play-circle-fill"></i> Movie Trailer
+                            </h4>
+                            <div class="ratio ratio-16x9">
+                                <iframe src="https://www.youtube.com/embed/@Model.Movie.YoutubeId"
+                                        title="@Model.Movie.Name Trailer"
+                                        allowfullscreen
+                                        class="rounded shadow">
+                                </iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Like/Dislike Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="rating-section bg-light p-4 rounded shadow-sm">
+                        <h4 class="text-primary mb-3">
+                            <i class="bi bi-heart-fill"></i> Rate this Movie
+                        </h4>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <button type="button" id="likeBtn" class="btn btn-outline-success d-flex align-items-center gap-2" onclick="voteMovie(@Model.MovieId, true)">
+                                    <i class="bi bi-hand-thumbs-up-fill"></i>
+                                    <span id="likeCount">@Model.Movie.LikeCount</span>
+                                    <span class="d-none d-sm-inline">Like</span>
+                                </button>
+
+                                <button type="button" id="dislikeBtn" class="btn btn-outline-danger d-flex align-items-center gap-2" onclick="voteMovie(@Model.MovieId, false)">
+                                    <i class="bi bi-hand-thumbs-down-fill"></i>
+                                    <span id="dislikeCount">@Model.Movie.DislikeCount</span>
+                                    <span class="d-none d-sm-inline">Dislike</span>
+                                </button>
+                            </div>
+
+                            <div id="voteMessage" class="alert d-none"></div>
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="btn btn-outline-success disabled d-flex align-items-center gap-2">
+                                    <i class="bi bi-hand-thumbs-up-fill"></i>
+                                    <span>@Model.Movie.LikeCount</span>
+                                    <span class="d-none d-sm-inline">Likes</span>
+                                </div>
+
+                                <div class="btn btn-outline-danger disabled d-flex align-items-center gap-2">
+                                    <i class="bi bi-hand-thumbs-down-fill"></i>
+                                    <span>@Model.Movie.DislikeCount</span>
+                                    <span class="d-none d-sm-inline">Dislikes</span>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle"></i>
+                                Please <a asp-area="Identity" asp-page="/Account/Login" class="alert-link">login</a> to rate this movie.
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Purchase Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="purchase-section bg-primary bg-gradient text-white p-4 rounded shadow">
+                        <h4 class="mb-3">
+                            <i class="bi bi-cart-plus-fill"></i> Get Your Tickets
+                        </h4>
+
+                        <div class="row align-items-end">
+                            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                                <label asp-for="Count" class="form-label fw-bold">Number of Tickets</label>
+                                <input asp-for="Count" class="form-control form-control-lg" min="1" max="50" />
+                                <span asp-validation-for="Count" class="text-warning"></span>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                                <div class="ticket-total">
+                                    <small class="text-white-50">Total Price</small>
+                                    <div class="fs-4 fw-bold" id="totalPrice">$@Model.Movie.Price.ToString("0.00")</div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-4 mb-3">
+                                <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">
+                                    <i class="bi bi-cart-plus"></i> Add to Cart
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -129,24 +179,114 @@
             </div>
         </div>
     </div>
+
+    <!-- Hidden Fields -->
+    <input hidden asp-for="MovieId" />
 </form>
 
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<script>
+    // Set initial button states based on user's vote
+    document.addEventListener('DOMContentLoaded', function() {
+    @if (User.Identity.IsAuthenticated && ViewBag.UserVote != null)
+    {
+        <text>
+                var userVote = @Json.Serialize(ViewBag.UserVote);
+                updateButtonStates(userVote);
+        </text>
+    }
+    });
 
-<style>
-    /* Custom styling for better visual hierarchy */
-    .card-body {
-        padding: 1.5rem;
+    function voteMovie(movieId, isLike) {
+        var url = isLike ? '/Customer/Home/LikeMovie' : '/Customer/Home/DislikeMovie';
+
+        // Get anti-forgery token
+        var token = document.querySelector('input[name="__RequestVerificationToken"]');
+        var headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        };
+
+        if (token) {
+            headers['RequestVerificationToken'] = token.value;
+        }
+
+        // Create form data
+        var formData = new URLSearchParams();
+        formData.append('movieId', movieId);
+        if (token) {
+            formData.append('__RequestVerificationToken', token.value);
+        }
+
+        fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update counts
+                document.getElementById('likeCount').textContent = data.likeCount;
+                document.getElementById('dislikeCount').textContent = data.dislikeCount;
+
+                // Update button states
+                updateButtonStates(data.userVote);
+
+                // Show message
+                showVoteMessage(data.message, 'success');
+            } else {
+                showVoteMessage(data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showVoteMessage('An error occurred while processing your vote', 'danger');
+        });
     }
 
-    .ratio-16x9 {
-        border-radius: 0.25rem;
-        overflow: hidden;
+    function updateButtonStates(userVote) {
+        var likeBtn = document.getElementById('likeBtn');
+        var dislikeBtn = document.getElementById('dislikeBtn');
+
+        // Reset button states
+        likeBtn.className = 'btn btn-outline-success d-flex align-items-center gap-2';
+        dislikeBtn.className = 'btn btn-outline-danger d-flex align-items-center gap-2';
+
+        // Apply active state based on user vote
+        if (userVote === true) {
+            likeBtn.className = 'btn btn-success d-flex align-items-center gap-2';
+        } else if (userVote === false) {
+            dislikeBtn.className = 'btn btn-danger d-flex align-items-center gap-2';
+        }
     }
 
-    .badge {
-        font-size: 0.85rem;
-        padding: 0.35em 0.65em;
+    function showVoteMessage(message, type) {
+        var messageDiv = document.getElementById('voteMessage');
+        messageDiv.className = `alert alert-${type}`;
+        messageDiv.textContent = message;
+        messageDiv.classList.remove('d-none');
+
+        // Hide message after 3 seconds
+        setTimeout(() => {
+            messageDiv.classList.add('d-none');
+        }, 3000);
     }
-</style>
+
+    // Update total price based on ticket count
+    document.querySelector('input[name="Count"]').addEventListener('input', function() {
+        var count = parseInt(this.value) || 0;
+        var price = @Model.Movie.Price;
+        var price5 = @Model.Movie.Price5;
+        var price10 = @Model.Movie.Price10;
+
+        var totalPrice;
+        if (count >= 10) {
+            totalPrice = count * price10;
+        } else if (count >= 6) {
+            totalPrice = count * price5;
+        } else {
+            totalPrice = count * price;
+        }
+
+        document.getElementById('totalPrice').textContent = '$' + totalPrice.toFixed(2);
+    });
+</script>

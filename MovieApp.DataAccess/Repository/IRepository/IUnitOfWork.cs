@@ -9,12 +9,12 @@ namespace MovieApp.DataAccess.Repository.IRepository
     public interface IUnitOfWork
     {
         ICategoryRepository categoryRepository { get; }
-
         IMovieRepository movieRepository { get; }
         IShoppingCartRepository shoppingCartRepository { get; }
         IApplicationUserRepository applicationUserRepository { get; }
         IOrderHeaderRepository orderHeaderRepository { get; }
         IOrderDetailRepository orderDetailRepository { get; }
+        IMovieVoteRepository movieVoteRepository { get; } // Add this line
         void Save();
     }
 }

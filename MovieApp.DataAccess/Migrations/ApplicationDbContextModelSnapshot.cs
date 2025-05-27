@@ -477,6 +477,39 @@ namespace MovieApp.DataAccess.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MovieApp.Models.MovieVote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsLike")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("VotedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("MovieId", "UserId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_MovieVotes_MovieId_UserId");
+
+                    b.ToTable("MovieVotes");
+                });
+
             modelBuilder.Entity("MovieApp.Models.OrderDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -662,6 +695,21 @@ namespace MovieApp.DataAccess.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("MovieApp.Models.MovieVote", b =>
+                {
+                    b.HasOne("MovieApp.Models.Movie", null)
+                        .WithMany("MovieVotes")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MovieApp.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MovieApp.Models.OrderDetail", b =>
                 {
                     b.HasOne("MovieApp.Models.Movie", "Movie")
@@ -709,6 +757,11 @@ namespace MovieApp.DataAccess.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Movie");
+                });
+
+            modelBuilder.Entity("MovieApp.Models.Movie", b =>
+                {
+                    b.Navigation("MovieVotes");
                 });
 #pragma warning restore 612, 618
         }

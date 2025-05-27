@@ -21,11 +21,46 @@ namespace MovieApp.DataAccess.Data
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<MovieVote> MovieVotes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             base.OnModelCreating(modelBuilder);
+
+            // Configure MovieVote entity
+            modelBuilder.Entity<MovieVote>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                // Configure Movie relationship
+                entity.HasOne<Movie>()
+                    .WithMany(m => m.MovieVotes)
+                    .HasForeignKey(e => e.MovieId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Configure ApplicationUser relationship  
+                entity.HasOne<ApplicationUser>()
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Ensure one vote per user per movie
+                entity.HasIndex(e => new { e.MovieId, e.UserId })
+                    .IsUnique()
+                    .HasDatabaseName("IX_MovieVotes_MovieId_UserId");
+
+                // Configure properties
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(450); // Standard AspNetUser Id length
+
+                entity.Property(e => e.IsLike)
+                    .IsRequired();
+
+                entity.Property(e => e.VotedAt)
+                    .IsRequired();
+            });
 
             modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "Action", DisplayOrder = 1, Description = "Movies with high energy, physical stunts, and intense scenes." },
@@ -172,7 +207,7 @@ namespace MovieApp.DataAccess.Data
                         CategoryId = 1,
                         ImageUrl = "\\images\\movie\\af91e03f-a44a-4545-9d04-d9ae1c138eba.jpg"
                     }
-                 );
+            );
         }
     }
 }
