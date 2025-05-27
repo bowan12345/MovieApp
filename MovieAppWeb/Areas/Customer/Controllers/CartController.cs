@@ -95,7 +95,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             _unitOfWork.Save();
             //update shopping cart session
             HttpContext.Session.SetInt32(SessionConstants.SessionCart, _unitOfWork.shoppingCartRepository
-                                    .GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count() - 1);
+                                    .GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count());
             return RedirectToAction(nameof(Index));
         }
 
