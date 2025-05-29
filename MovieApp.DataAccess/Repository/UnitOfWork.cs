@@ -17,7 +17,8 @@ namespace MovieApp.DataAccess.Repository
         public IApplicationUserRepository applicationUserRepository { get; private set; }
         public IOrderHeaderRepository orderHeaderRepository { get; private set; }
         public IOrderDetailRepository orderDetailRepository { get; private set; }
-        public IMovieVoteRepository movieVoteRepository { get; private set; } // Add this line
+        public IMovieVoteRepository movieVoteRepository { get; private set; }
+        public IReviewRepository Review { get; private set; }
 
         public UnitOfWork(ApplicationDbContext db)
         {
@@ -28,7 +29,8 @@ namespace MovieApp.DataAccess.Repository
             applicationUserRepository = new ApplicationUserRepository(_db);
             orderHeaderRepository = new OrderHeaderRepository(_db);
             orderDetailRepository = new OrderDetailRepository(_db);
-            movieVoteRepository = new MovieVoteRepository(_db); // Make sure this line exists
+            movieVoteRepository = new MovieVoteRepository(_db);
+            Review = new ReviewRepository(_db);
         }
 
         public void Save()

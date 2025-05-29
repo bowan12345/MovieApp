@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MovieApp.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIdentityTablesToDb : Migration
+    public partial class ToDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

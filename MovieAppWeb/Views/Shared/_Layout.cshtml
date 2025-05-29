@@ -36,6 +36,10 @@
                             <a class="nav-link " asp-area="Admin" asp-controller="Order" asp-action="Index">Manage Order</a>
                         </li>
 
+                        <a asp-area="Customer" asp-controller="Review" asp-action="MyReviews" class="nav-link">
+                            <i class="fas fa-star"></i> My Reviews
+                        </a>
+
                          @if (User.IsInRole(RoleName.Role_Admin))
                         {
                         <li class="nav-item dropdown">

@@ -22,6 +22,7 @@ namespace MovieApp.DataAccess.Data
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<MovieVote> MovieVotes { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

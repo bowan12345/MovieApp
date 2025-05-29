@@ -20,7 +20,5 @@ namespace MovieApp.DataAccess.Repository.IRepository
         void RemoveRange(IEnumerable<T> entities);
 
         //void Update(T entity);
-
-
     }
 }

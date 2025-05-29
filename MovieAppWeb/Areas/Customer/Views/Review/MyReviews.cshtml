@@ -1,0 +1,116 @@
+﻿@model IEnumerable<MovieApp.Models.Review>
+
+@{
+    ViewData["Title"] = "My Reviews";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-star"></i> My Reviews</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Write New Review
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var review in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-dark text-white">
+                            <h6 class="mb-0">@review.Movie.Name</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="star-display">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= review.Rating)
+                                        {
+                                            <span class="text-warning">★</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">★</span>
+                                        }
+                                    }
+                                </div>
+                                <small class="text-muted">@review.CreatedDate.ToString("MMM dd, yyyy")</small>
+                            </div>
+
+                            <h6 class="card-title">@review.Title</h6>
+                            <p class="card-text">
+                                @if (review.Content.Length > 100)
+                                {
+                                    @(review.Content.Substring(0, 100))
+
+                                }
+                                else
+                                {
+                                    @review.Content
+                                }
+                            </p>
+
+                            @if (review.UpdatedDate.HasValue)
+                            {
+                                <small class="text-muted">
+                                    <i class="fas fa-edit"></i> Updated: @review.UpdatedDate.Value.ToString("MMM dd, yyyy")
+                                </small>
+                            }
+                        </div>
+                        <div class="card-footer bg-light">
+                            <div class="btn-group w-100">
+                                <a asp-action="Edit" asp-route-id="@review.ReviewId" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@review.ReviewId" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                                <a asp-controller="Movie" asp-action="Details" asp-route-id="@review.MovieId" class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-film"></i> View Movie
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-star fa-4x text-muted"></i>
+            </div>
+            <h4 class="text-muted">No Reviews Yet</h4>
+            <p class="text-muted">You haven't written any reviews yet. Start by reviewing a movie you've watched!</p>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Write Your First Review
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .star-display {
+        font-size: 1.2rem;
+    }
+
+    .card {
+        transition: transform 0.2s;
+        border: none;
+        border-radius: 10px;
+    }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+        }
+
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+</style>

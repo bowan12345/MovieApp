@@ -1,0 +1,168 @@
+﻿@model MovieApp.Models.ViewModels.ReviewVM
+
+@{
+    ViewData["Title"] = "Edit Review";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0"><i class="fas fa-edit"></i> Edit Review</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Movie:</strong> @Model.Review.Movie.Name
+                    </div>
+
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Review.ReviewId" />
+                        <input type="hidden" asp-for="Review.MovieId" />
+                        <input type="hidden" asp-for="Review.UserId" />
+                        <input type="hidden" asp-for="Review.CreatedDate" />
+                        
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Review.Rating" class="form-label">Rating</label>
+                            <div class="rating-container">
+                                <div class="star-rating">
+                                    <input type="radio" asp-for="Review.Rating" value="5" id="star5" checked="@(Model.Review.Rating == 5)" />
+                                    <label for="star5" title="5 stars">★</label>
+
+                                    <input type="radio" asp-for="Review.Rating" value="4" id="star4" checked="@(Model.Review.Rating == 4)" />
+                                    <label for="star4" title="4 stars">★</label>
+
+                                    <input type="radio" asp-for="Review.Rating" value="3" id="star3" checked="@(Model.Review.Rating == 3)" />
+                                    <label for="star3" title="3 stars">★</label>
+
+                                    <input type="radio" asp-for="Review.Rating" value="2" id="star2" checked="@(Model.Review.Rating == 2)" />
+                                    <label for="star2" title="2 stars">★</label>
+
+                                    <input type="radio" asp-for="Review.Rating" value="1" id="star1" checked="@(Model.Review.Rating == 1)" />
+                                    <label for="star1" title="1 star">★</label>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Review.Rating" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Review.Title" class="form-label">Review Title</label>
+                            <input asp-for="Review.Title" class="form-control" placeholder="Enter a brief title for your review">
+                            <span asp-validation-for="Review.Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Review.Content" class="form-label">Review Content</label>
+                            <textarea asp-for="Review.Content" class="form-control" rows="6" placeholder="Write your detailed review here..."></textarea>
+                            <span asp-validation-for="Review.Content" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-6">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-plus"></i> 
+                                    Created: @Model.Review.CreatedDate.ToString("MMM dd, yyyy 'at' h:mm tt")
+                                </small>
+                            </div>
+                            @if (Model.Review.UpdatedDate.HasValue)
+                            {
+                                <div class="col-sm-6 text-end">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar-edit"></i> 
+                                        Last updated: @Model.Review.UpdatedDate.Value.ToString("MMM dd, yyyy 'at' h:mm tt")
+                                    </small>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <a asp-action="MyReviews" class="btn btn-secondary me-2">
+                                    <i class="fas fa-arrow-left"></i> Back to My Reviews
+                                </a>
+                                <a asp-controller="Movie" asp-action="Details" asp-route-id="@Model.Review.MovieId" class="btn btn-outline-info">
+                                    <i class="fas fa-film"></i> View Movie
+                                </a>
+                            </div>
+                            <div>
+                                <a asp-action="Delete" asp-route-id="@Model.Review.ReviewId" class="btn btn-outline-danger me-2">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-save"></i> Update Review
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        font-size: 2rem;
+        color: #ddd;
+    }
+
+    .star-rating input {
+        display: none;
+    }
+
+    .star-rating label {
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+        color: #ffc107;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+
+    .alert-info {
+        border-left: 4px solid #0dcaf0;
+        background-color: #e7f3ff;
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Update star display on page load
+        $(document).ready(function() {
+            updateStarDisplay();
+        });
+        
+        // Update star display when rating changes
+        $('input[name="Review.Rating"]').change(function() {
+            updateStarDisplay();
+        });
+        
+        function updateStarDisplay() {
+            var rating = $('input[name="Review.Rating"]:checked').val();
+            $('.star-rating label').removeClass('selected');
+            if (rating) {
+                $('.star-rating input[value="' + rating + '"] ~ label, .star-rating input[value="' + rating + '"]').next().addClass('selected');
+            }
+        }
+    </script>
+}
