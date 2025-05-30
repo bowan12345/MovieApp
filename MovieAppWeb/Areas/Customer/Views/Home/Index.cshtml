@@ -318,23 +318,8 @@
                         </button>
                     </form>
 
-                    <!-- Cinema Selector -->
-                    <div class="dropdown">
-                        <button class="btn btn-dark dropdown-toggle" type="button" id="cinemaDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            Select Cinema
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="cinemaDropdown">
-                            <li><a class="dropdown-item" href="#" data-value="lower-hutt">Lower Hutt Cinema</a></li>
-                            <li><a class="dropdown-item" href="#" data-value="city-cbd">City CBD Cinema</a></li>
-                            <li><a class="dropdown-item" href="#" data-value="upper-hutt">Upper Hutt Cinema</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item clear-option" href="#" id="clearSelection">Clear Selection</a></li>
-                        </ul>
-
-                    </div>
-
-                    <!-- Times & Tickets Button -->
-                    <a href="#nowShowing" class="btn btn-outline-light ms-3">Times & Tickets</a>
+                    <!-- Now Showing Button -->
+                    <a href="#nowShowing" class="btn btn-outline-light ms-3">Now Showing</a>
                 </div>
             </div>
         </div>
@@ -400,7 +385,7 @@
                             <p class="movie-director">by @movie.Director</p>
                             <p class="movie-price">@movie.Price.ToString("c")</p>
                             <a href="@Url.Action("Details", "Home", new { movieId = movie.Id })" class="times-tickets-btn">
-                                Times & Tickets
+                                Tickets
                             </a>
                         </div>
                     </div>
@@ -417,40 +402,36 @@
                 <!-- Luxury Experience -->
                 <div class="col-md-3">
                     <div class="experience-card">
-                        <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="experience-img" alt="Luxury Cinema">
+                        <img src="./images/Gold Class.jpg" class="experience-img" alt="Luxury Cinema">
                         <div class="experience-overlay">
                             <div class="experience-name">Gold Class</div>
-                            <button class="find-out-more">Find out more</button>
                         </div>
                     </div>
                 </div>
                 <!-- Designer Experience -->
                 <div class="col-md-3">
                     <div class="experience-card">
-                        <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="experience-img" alt="Designer Cinema">
+                        <img src="./images/Boutique.jpg" class="experience-img" alt="Designer Cinema">
                         <div class="experience-overlay">
                             <div class="experience-name">Boutique</div>
-                            <button class="find-out-more">Find out more</button>
                         </div>
                     </div>
                 </div>
                 <!-- V-Max Experience -->
                 <div class="col-md-3">
                     <div class="experience-card">
-                        <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="experience-img" alt="V-Max Cinema">
+                        <img src="./images/V-Max.jpg" class="experience-img" alt="V-Max Cinema">
                         <div class="experience-overlay">
                             <div class="experience-name">V-Max</div>
-                            <button class="find-out-more">Find out more</button>
                         </div>
                     </div>
                 </div>
                 <!-- IMAX Experience -->
                 <div class="col-md-3">
                     <div class="experience-card">
-                        <img src="https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="experience-img" alt="IMAX Cinema">
+                        <img src="./images/IMAX.jpg" class="experience-img" alt="IMAX Cinema">
                         <div class="experience-overlay">
                             <div class="experience-name">IMAX</div>
-                            <button class="find-out-more">Find out more</button>
                         </div>
                     </div>
                 </div>
@@ -507,21 +488,6 @@
 
 <script>
     $(document).ready(function () {
-        $('.dropdown-item').on('click', function (e) {
-            e.preventDefault();
-            // get text
-            var selectedText = $(this).text();
-            // update display
-            $('#cinemaDropdown').text(selectedText);
-
-        });
-        //clear dropdown
-        $('#clearSelection').on('click', function (e) {
-            e.preventDefault();
-            $('#cinemaDropdown').text('Select Cinema');
-
-            $('#selectedCinema').val('');
-        });
 
         // Smooth scrolling for Times & Tickets link
         $('a[href="#nowShowing"]').on('click', function (e) {
