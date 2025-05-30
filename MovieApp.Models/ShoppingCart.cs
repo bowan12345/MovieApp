@@ -27,6 +27,9 @@ namespace MovieApp.Models
         [ValidateNever]
         public ApplicationUser ApplicationUser { get; set; }
 
+        [Required]
+        public string TicketType { get; set; }
+
         [NotMapped]
         public double Price { get; set; }
     }

@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <!-- Main Form Container -->
-<form method="post">
+<form method="post" id="ticketForm" onsubmit="return submitTicketForm(event)">
     <div class="card shadow border-0 mt-4">
         <!-- Card Header with Movie Title -->
         <div class="card-header bg-primary bg-gradient text-light py-4">
@@ -324,12 +324,13 @@
     </div>
 
     <!-- Hidden Fields for Form Submission -->
-    <input hidden asp-for="MovieId" />
+    <input hidden asp-for="MovieId" name="movieId" />
     <input hidden asp-for="Count" id="hidden-count" />
-    <input type="hidden" name="AdultTickets" id="adult-tickets" value="0" />
-    <input type="hidden" name="ChildTickets" id="child-tickets" value="0" />
-    <input type="hidden" name="SeniorTickets" id="senior-tickets" value="0" />
-    <input type="hidden" name="StudentTickets" id="student-tickets" value="0" />
+
+    <!-- Shopping cart collection container -->
+    <div id="shopping-cart-container">
+        <!-- Shopping cart objects will be generated here -->
+    </div>
 </form>
 
 <style>
@@ -346,7 +347,6 @@
         background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
     }
 
-    
 </style>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -357,7 +357,7 @@
         child: @(Model.Movie.Price * 0.7),
         senior: @(Model.Movie.Price * 0.8),
         student: @(Model.Movie.Price * 0.75)
-    };
+        };
 
     let ticketQuantities = {
         adult: 0,
@@ -373,20 +373,20 @@
         <text>
                     var userVote = "@ViewBag.UserVote"; // like / dislike / none
                     switch (userVote) {
-                    case "like":
-                        updateButtonStates(true);
-                        break;
+                            case "like":
+                    updateButtonStates(true);
+                    break;
                     case "dislike":
-                        updateButtonStates(false);
-                        break;
+                    updateButtonStates(false);
+                    break;
                     case "none":
                     default:
-                        updateButtonStates(null);
-                        break;
-                    }
+                    updateButtonStates(null);
+                    break;
+                            }
         </text>
     }
-        updateTicketDisplay();
+            updateTicketDisplay();
     });
 
     function changeTicketQuantity(type, change) {
@@ -410,9 +410,6 @@
             document.getElementById(`${type}-qty`).textContent = qty;
             document.getElementById(`${type}-subtotal`).textContent = `$${subtotal.toFixed(2)}`;
 
-            // Update hidden form fields
-            document.getElementById(`${type}-tickets`).value = qty;
-
             totalTickets += qty;
             totalPrice += subtotal;
         });
@@ -427,6 +424,63 @@
         // Enable/disable add to cart button
         const addToCartBtn = document.getElementById('add-to-cart-btn');
         addToCartBtn.disabled = totalTickets === 0;
+    }
+
+    // Function to prepare and submit form data
+    function submitTicketForm(event) {
+        // Clear previous shopping cart inputs
+        const cartContainer = document.getElementById('shopping-cart-container');
+        cartContainer.innerHTML = '';
+
+        // Track if any tickets are selected
+        let hasTickets = false;
+
+        // Use a separate counter for selected tickets to ensure sequential indices
+        let selectedIndex = 0;
+
+        // Add each ticket type with quantity > 0 to the form
+        Object.keys(ticketQuantities).forEach((type) => {
+            const qty = ticketQuantities[type];
+            if (qty > 0) {
+                hasTickets = true;
+
+                // Create shopping cart object for this ticket type
+                const movieIdInput = document.createElement('input');
+                movieIdInput.type = 'hidden';
+                movieIdInput.name = `carts[${selectedIndex}].MovieId`;
+                movieIdInput.value = @Model.MovieId;
+                cartContainer.appendChild(movieIdInput);
+
+                const countInput = document.createElement('input');
+                countInput.type = 'hidden';
+                countInput.name = `carts[${selectedIndex}].Count`;
+                countInput.value = qty;
+                cartContainer.appendChild(countInput);
+
+                const ticketTypeInput = document.createElement('input');
+                ticketTypeInput.type = 'hidden';
+                ticketTypeInput.name = `carts[${selectedIndex}].TicketType`;
+                ticketTypeInput.value = type;
+                cartContainer.appendChild(ticketTypeInput);
+
+                const priceInput = document.createElement('input');
+                priceInput.type = 'hidden';
+                priceInput.name = `carts[${selectedIndex}].Price`;
+                priceInput.value = ticketPrices[type];
+                cartContainer.appendChild(priceInput);
+
+                // Increment the selected index for the next selected ticket type
+                selectedIndex++;
+            }
+        });
+
+        // If no tickets selected, prevent form submission
+        if (!hasTickets) {
+            return false;
+        }
+
+        // Allow form submission
+        return true;
     }
 
     // Voting functions (unchanged)
@@ -455,26 +509,26 @@
             headers: headers,
             body: formData
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update counts
-                document.getElementById('likeCount').textContent = data.likeCount;
-                document.getElementById('dislikeCount').textContent = data.dislikeCount;
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update counts
+                    document.getElementById('likeCount').textContent = data.likeCount;
+                    document.getElementById('dislikeCount').textContent = data.dislikeCount;
 
-                // Update button states
-                updateButtonStates(data.userVote);
+                    // Update button states
+                    updateButtonStates(data.userVote);
 
-                // Show message
-                showVoteMessage(data.message, 'success');
-            } else {
-                showVoteMessage(data.message, 'danger');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showVoteMessage('An error occurred while processing your vote', 'danger');
-        });
+                    // Show message
+                    showVoteMessage(data.message, 'success');
+                } else {
+                    showVoteMessage(data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showVoteMessage('An error occurred while processing your vote', 'danger');
+            });
     }
 
     function updateButtonStates(userVote) {

@@ -59,26 +59,38 @@ namespace MovieAppWeb.Areas.Customer.Controllers
         }
 
 
-        public IActionResult Plus(int cartId)
+        public IActionResult Plus(int cartId, string ticketType)
         {
-            var cartFromDb = _unitOfWork.shoppingCartRepository.Get(u => u.Id == cartId);
+            var cartFromDb = _unitOfWork.shoppingCartRepository.Get(u => u.Id == cartId && u.TicketType == ticketType);
             cartFromDb.Count += 1;
             _unitOfWork.shoppingCartRepository.Update(cartFromDb);
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Minus(int cartId)
+        public IActionResult Minus(int cartId, string ticketType)
         {
-            var cartFromDb = _unitOfWork.shoppingCartRepository.Get(u => u.Id == cartId);
+            //get login user info
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            //get userId
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var cartFromDb = _unitOfWork.shoppingCartRepository.Get(u => u.Id == cartId && u.TicketType == ticketType);
             cartFromDb.Count -= 1;
             //check if count is less than 0, if yes, remove the item from cart
             if (cartFromDb.Count == 0)
             {
+                //remove items
                 _unitOfWork.shoppingCartRepository.Remove(cartFromDb);
-                //update shopping cart session
-                HttpContext.Session.SetInt32(SessionConstants.SessionCart, _unitOfWork.shoppingCartRepository
-                                        .GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count() - 1);
+                // set ticket count again
+                var cartFromListDb = _unitOfWork.shoppingCartRepository.GetAll(u => u.ApplicationUserId == userId);
+                if (cartFromListDb != null)
+                {
+                    //update shopping cart session
+                    HttpContext.Session.SetInt32(SessionConstants.SessionCart, _unitOfWork.shoppingCartRepository
+                                            .GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).GroupBy(x=>x.MovieId).Count());
+                }
+                
             }
             else
             {
@@ -88,14 +100,14 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Remove(int cartId)
+        public IActionResult Remove(int movieId)
         {
-            var cartFromDb = _unitOfWork.shoppingCartRepository.Get(u => u.Id == cartId);
-            _unitOfWork.shoppingCartRepository.Remove(cartFromDb);
+            var cartFromListDb = _unitOfWork.shoppingCartRepository.GetAll(u => u.MovieId == movieId);
+            _unitOfWork.shoppingCartRepository.RemoveRange(cartFromListDb);
             _unitOfWork.Save();
             //update shopping cart session
             HttpContext.Session.SetInt32(SessionConstants.SessionCart, _unitOfWork.shoppingCartRepository
-                                    .GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count());
+                                    .GetAll(u => u.ApplicationUserId == cartFromListDb.First().ApplicationUserId).Count());
             return RedirectToAction(nameof(Index));
         }
 
@@ -130,7 +142,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
                 cart.Price = GetPriceBasedOnQuantity(cart);
-                ShoppingCartVM.OrderHeader.OrderTotal += Math.Round(cart.Price * cart.Count, 2);
+                ShoppingCartVM.OrderHeader.OrderTotal +=(cart.Price * cart.Count);
             }
 
             return View(ShoppingCartVM);
@@ -158,7 +170,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             foreach (var cart in ShoppingCartVM.ShoppingCartList)
             {
                 cart.Price = GetPriceBasedOnQuantity(cart);
-                ShoppingCartVM.OrderHeader.OrderTotal += Math.Round(cart.Price * cart.Count, 2);
+                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }
 
             // assemble user address info
@@ -259,22 +271,25 @@ namespace MovieAppWeb.Areas.Customer.Controllers
 
         private double GetPriceBasedOnQuantity(ShoppingCart shoppingCart)
         {
-
-            if (shoppingCart.Count > 0 && shoppingCart.Count <= 5)
+            //children with 0.7
+            if (TicketDiscountRate.CHILD == shoppingCart.TicketType)
             {
-                shoppingCart.Price = shoppingCart.Movie.Price;
+                shoppingCart.Price = shoppingCart.Movie.Price * TicketDiscountRate.CHILD_RATE;
             }
-            else if (shoppingCart.Count > 6 && shoppingCart.Count <= 10)
+            //senior with 0.8
+            else if (TicketDiscountRate.SENIOR == shoppingCart.TicketType)
             {
-                shoppingCart.Price = shoppingCart.Movie.Price5;
+                shoppingCart.Price = shoppingCart.Movie.Price * TicketDiscountRate.SENIOR_RATE;
             }
-            else if (shoppingCart.Count > 10)
+            //student with 0.75
+            else if (TicketDiscountRate.STUDENT == shoppingCart.TicketType)
             {
-                shoppingCart.Price = shoppingCart.Movie.Price10;
+                shoppingCart.Price = shoppingCart.Movie.Price * TicketDiscountRate.STUDENT_RATE;
             }
             else
             {
-                shoppingCart.Price = -1;
+                //adult
+                shoppingCart.Price = shoppingCart.Movie.Price;
             }
             return shoppingCart.Price;
         }

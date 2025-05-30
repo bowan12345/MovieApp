@@ -32,9 +32,10 @@ namespace MovieApp.Models
         [Range(1, 1000)]
         public double ListPrice { get; set; }
         [Required]
-        [Display(Name = "Price for 1-5")]
         [Range(1, 1000)]
         public double Price { get; set; }
+
+        #region extended properties for extension
         [Required]
         [Display(Name = "Price for 6-10")]
         [Range(1, 1000)]
@@ -43,6 +44,8 @@ namespace MovieApp.Models
         [Display(Name = "Price for 10+")]
         [Range(1, 1000)]
         public double Price10 { get; set; }
+        #endregion
+
         //youtube video id
         public string? YoutubeId { get; set; }
         //foreign key

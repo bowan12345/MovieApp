@@ -1,64 +1,141 @@
-﻿
+﻿@{
+    // Helper method to get CSS class for ticket type badge
+    string GetTicketTypeClass(string ticketType)
+    {
+        return ticketType.ToLower() switch
+        {
+            "adult" => "bg-primary",
+            "child" => "bg-success",
+            "senior" => "bg-info",
+            "student" => "bg-warning",
+            _ => "bg-secondary"
+        };
+    }
+
+    // Helper method to get description for ticket type
+    string GetTicketTypeDescription(string ticketType)
+    {
+        return ticketType.ToLower() switch
+        {
+            "adult" => "Regular adult ticket (Ages 18-64)",
+            "child" => "Child ticket (Ages 3-12)",
+            "senior" => "Senior ticket (Ages 65+)",
+            "student" => "Student ticket (Valid ID required)",
+            _ => "Standard ticket"
+        };
+    }
+}
+
 <form method="post">
     <br />
     <div class="card shadow border-0">
-        <div class="card-header bg-primary  bg-gradient text-light ml-0 py-4">
+        <div class="card-header bg-primary bg-gradient text-light ml-0 py-4">
             <div class="row px-4">
                 <div class="col-6">
                     <h5 class="pt-2 text-white">
                         Shopping Cart
                     </h5>
                 </div>
-
             </div>
         </div>
         <div class="card-body my-4">
-            <div class="row">
-            </div>
             <div class="row mb-3 pb-3">
                 <div class="col-md-2 offset-md-1">
                     <a asp-area="Customer" asp-controller="Home" asp-action="Index"
                        class="btn btn-outline-primary text-uppercase mb-5 btn-sm"><small>Continue Shopping</small></a>
                 </div>
                 <div class="col-md-10 offset-md-1">
+                    @{
+                        // Create a dictionary to group items by MovieId
+                        var movieGroupsDict = new Dictionary<int, List<ShoppingCart>>();
 
-                    @foreach (var item in Model.ShoppingCartList)
+                        // Group items manually
+                        foreach (var item in Model.ShoppingCartList)
+                        {
+                            if (!movieGroupsDict.ContainsKey(item.MovieId))
+                            {
+                                movieGroupsDict[item.MovieId] = new List<ShoppingCart>();
+                            }
+                            movieGroupsDict[item.MovieId].Add(item);
+                        }
+                    }
+
+                    @foreach (var movieGroup in movieGroupsDict)
                     {
-                        <div class="row border-bottom pb-3">
-                            <div class="d-none d-lg-block col-lg-1 text-center py-2">
-                                <img src="@item.Movie.ImageUrl" class="rounded" width="100%" />
-                            </div>
-                            <div class="col-12 col-lg-6 pt-md-3">
-                                <h5 class="text-uppercase text-secondary"><strong>@item.Movie.Name</strong></h5>
-                                <p><small>@Html.Raw(item.Movie.Description)</small></p>
-                            </div>
-                            <div class="col-12  col-lg-5 text-center row">
-                                <div class="col-3 text-md-right pt-2 pt-md-4">
-                                    <h6 class="fw-semibold">
-                                        @item.Price.ToString("c")
-                                        <span class="text-muted">&nbsp;x&nbsp;</span>@item.Count
-                                    </h6>
-                                </div>
-                                <div class="col-6 col-sm-4 col-lg-6 pt-2">
-                                    <div class="w-75 btn-group" role="group">
-                                        <a asp-action="plus" asp-route-cartId="@item.Id" class="btn btn-outline-primary bg-gradient py-2">
-                                            <i class="bi bi-plus-square"></i>
-                                        </a> &nbsp;
-                                        <a asp-action="minus" asp-route-cartId="@item.Id" class="btn btn-outline-primary bg-gradient py-2">
-                                            <i class="bi bi-dash-square"></i>
-                                        </a>
-                                    </div>
+                        var groupItems = movieGroup.Value;
+                        var firstItem = groupItems.First();
+                        var movieId = movieGroup.Key;
+                        var movieName = firstItem.Movie.Name;
+                        var movieImage = firstItem.Movie.ImageUrl;
+                        var movieDescription = firstItem.Movie.Description;
 
+                        // Calculate totals manually
+                        double totalMoviePrice = 0;
+                        int totalMovieCount = 0;
+                        foreach (var item in groupItems)
+                        {
+                            totalMoviePrice += item.Price * item.Count;
+                            totalMovieCount += item.Count;
+                        }
+
+                        <div class="movie-group mb-4 border rounded p-3">
+                            <!-- Movie Header with Remove Button -->
+                            <div class="row align-items-center mb-3 pb-2 border-bottom">
+                                <div class="d-none d-lg-block col-lg-1 text-center py-2">
+                                    <img src="@movieImage" class="rounded" width="100%" />
                                 </div>
-                                <div class="col-3 col-sm-4 col-lg-2 offset-lg-1 text-right pt-2">
-                                    <a asp-action="remove" asp-route-cartId="@item.Id" class="btn btn-danger bg-gradient py-2 ">
-                                        <i class="bi bi-trash-fill"></i>
+                                <div class="col-12 col-lg-8 pt-md-3">
+                                    <h5 class="text-uppercase text-secondary"><strong>@movieName</strong></h5>
+                                    <p class="mb-0"><small>@Html.Raw(movieDescription)</small></p>
+                                    <div class="d-flex align-items-center mt-2">
+                                        <span class="badge bg-primary me-2">Total:</span>
+                                        <h6 class="fw-semibold mb-0">@totalMoviePrice.ToString("c")</h6>
+                                        <span class="text-muted mx-2">&nbsp;|&nbsp;</span>
+                                        <span class="badge bg-secondary me-2">Tickets:</span>
+                                        <h6 class="fw-semibold mb-0">@totalMovieCount</h6>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3 text-end">
+                                    <a asp-action="remove" asp-route-movieId="@movieId" class="btn btn-danger bg-gradient py-2">
+                                        <i class="bi bi-trash-fill me-2"></i> Remove All
                                     </a>
                                 </div>
                             </div>
 
+                            <!-- Ticket Type Items -->
+                            @foreach (var item in groupItems)
+                            {
+                                <div class="row align-items-center py-2 ticket-item">
+                                    <div class="col-12 col-md-4">
+                                        <div class="d-flex align-items-center">
+                                            <span class="ticket-type-badge @GetTicketTypeClass(item.TicketType)">@item.TicketType</span>
+                                            <span class="ms-3">@GetTicketTypeDescription(item.TicketType)</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 col-md-2 text-center">
+                                        <h6 class="fw-semibold mb-0">
+                                            @item.Price.ToString("c")
+                                        </h6>
+                                    </div>
+                                    <div class="col-4 col-md-3 text-center">
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="plus" asp-route-cartId="@item.Id" asp-route-ticketType="@item.TicketType"  class="btn btn-outline-primary bg-gradient py-2">
+                                                <i class="bi bi-plus-square"></i>
+                                            </a>
+                                            <span class="btn btn-outline-secondary py-2 px-3">@item.Count</span>
+                                            <a asp-action="minus" asp-route-cartId="@item.Id" asp-route-ticketType="@item.TicketType" class="btn btn-outline-primary bg-gradient py-2">
+                                                <i class="bi bi-dash-square"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 col-md-3 text-end">
+                                        <h6 class="fw-semibold mb-0">
+                                            @((item.Price * item.Count).ToString("c"))
+                                        </h6>
+                                    </div>
+                                </div>
+                            }
                         </div>
-
                     }
 
                 </div>
@@ -82,3 +159,41 @@
             </div>
         </div>
 </form>
+
+<style>
+    .movie-group {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: all 0.3s ease;
+    }
+
+    .movie-group:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .ticket-item {
+        border-bottom: 1px dashed #eee;
+        transition: background-color 0.2s ease;
+    }
+
+    .ticket-item:last-child {
+        border-bottom: none;
+    }
+
+    .ticket-item:hover {
+        background-color: rgba(0, 123, 255, 0.03);
+    }
+
+    .ticket-type-badge {
+        display: inline-block;
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
+        color: white;
+        min-width: 80px;
+    }
+</style>

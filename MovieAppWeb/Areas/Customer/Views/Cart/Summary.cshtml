@@ -1,89 +1,198 @@
 ﻿@using MovieApp.Models.ViewModels
 @model ShoppingCartVM
+
+@{
+    // Helper method to get CSS class for ticket type badge
+    string GetTicketTypeClass(string ticketType)
+    {
+        return ticketType.ToLower() switch
+        {
+            "adult" => "bg-primary",
+            "child" => "bg-success",
+            "senior" => "bg-info",
+            "student" => "bg-warning",
+            _ => "bg-secondary"
+        };
+    }
+
+    // Helper method to get description for ticket type
+    string GetTicketTypeDescription(string ticketType)
+    {
+        return ticketType.ToLower() switch
+        {
+            "adult" => "Regular adult ticket",
+            "child" => "Child ticket",
+            "senior" => "Senior ticket",
+            "student" => "Student ticket",
+            _ => "Standard ticket"
+        };
+    }
+}
 <form method="post">
-	<br />
-	<div class="container">
-		<div class="card shadow border-0">
+    <br />
+    <div class="container">
+        <div class="card shadow border-0">
 
-			<div class="card-header bg-primary bg-gradient text-light ml-0 py-4">
-				<div class="row px-4">
-					<div class="col-6">
-						<h5 class="pt-2 text-white">
-							Order Summary
-						</h5>
-					</div>
-					<div class="col-6 text-end">
-						<a asp-action="Index" class="btn btn-outline-danger btn-sm">Back to Cart</a>
-					</div>
-				</div>
-			</div>
-			<div class="card-body">
-				<div class="container rounded p-2">
-					<div class="row">
-						<div class="col-12 col-lg-6 pb-4">
-							<div class="row">
-								<h4 class="d-flex justify-content-between align-items-center mb-3">
-									<span class="text-info">Booker's Details:</span>
-								</h4>
-							</div>
-							<div class="row my-1">
-								<div class="col-3">
-									<label>Name</label>
-								</div>
-								<div class="col-9">
-									<input asp-for="OrderHeader.Name" class="form-control" />
-									<span asp-validation-for="OrderHeader.Name" class="text-danger"></span>
-								</div>
-							</div>
+            <div class="card-header bg-primary bg-gradient text-light ml-0 py-4">
+                <div class="row px-4">
+                    <div class="col-6">
+                        <h5 class="pt-2 text-white">
+                            Order Summary
+                        </h5>
+                    </div>
+                    <div class="col-6 text-end">
+                        <a asp-action="Index" class="btn btn-outline-danger btn-sm">Back to Cart</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="container rounded p-2">
+                    <div class="row">
+                        <div class="col-12 col-lg-6 pb-4">
+                            <div class="row">
+                                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-info">Booker's Details:</span>
+                                </h4>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-3">
+                                    <label>Name</label>
+                                </div>
+                                <div class="col-9">
+                                    <input asp-for="OrderHeader.Name" class="form-control" />
+                                    <span asp-validation-for="OrderHeader.Name" class="text-danger"></span>
+                                </div>
+                            </div>
 
-							<div class="row my-1">
-							<div class="col-3">
-								<label>Email</label>
-							</div>
-							<div class="col-9">
-								<input asp-for="OrderHeader.ApplicationUser.Email" disabled class="form-control" />
-								
-							</div>
-						</div>
-							
-						</div>
-						<div class="col-12 col-lg-5 offset-lg-1">
-							<h4 class="d-flex justify-content-between align-items-center mb-3">
-								<span class="text-info">Order Summary:</span>
-							</h4>
-							<ul class="list-group mb-3">
-								@foreach (var details in Model.ShoppingCartList)
-								{
-									<li class="list-group-item d-flex justify-content-between">
-										<div>
-											<h6 class="my-0">@details.Movie.Name</h6>
-											<small class="text-muted">Quantity: @details.Count</small>
-										</div>
-										<span class="text-muted">@((details.Price * details.Count).ToString("c")) </span>
-									</li>
-								}
+                            <div class="row my-1">
+                                <div class="col-3">
+                                    <label>Email</label>
+                                </div>
+                                <div class="col-9">
+                                    <input asp-for="OrderHeader.ApplicationUser.Email" disabled class="form-control" />
 
-								<li class="list-group-item d-flex justify-content-between bg-light">
-									<small class="text-info">Total (USD)</small>
-									<strong class="text-info">@Model.OrderHeader.OrderTotal.ToString("c")</strong>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="card-footer">
-				<div class="row">
-					<div class="col-12 col-md-8 pt-2">
-						<p style="color:maroon; font-size:14px;">
-							"Book in Seconds, Enjoy for Hours!
-						</p>
-					</div>
-					<div class="col-12 col-md-4">
-						<button type="submit" value="Place Order" class="btn btn-primary form-control">Place Order</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-12 col-lg-5 offset-lg-1">
+                            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-info">Order Summary:</span>
+                            </h4>
+
+                            @{
+                                // Create a dictionary to group items by MovieId
+                                var movieGroupsDict = new Dictionary<int, List<ShoppingCart>>();
+
+                                // Group items manually
+                                foreach (var item in Model.ShoppingCartList)
+                                {
+                                    if (!movieGroupsDict.ContainsKey(item.MovieId))
+                                    {
+                                        movieGroupsDict[item.MovieId] = new List<ShoppingCart>();
+                                    }
+                                    movieGroupsDict[item.MovieId].Add(item);
+                                }
+                            }
+
+                            <div class="order-summary-container">
+                                @foreach (var movieGroup in movieGroupsDict)
+                                {
+                                    var groupItems = movieGroup.Value;
+                                    var firstItem = groupItems.First();
+                                    var movieId = movieGroup.Key;
+                                    var movieName = firstItem.Movie.Name;
+
+                                    // Calculate totals manually
+                                    double totalMoviePrice = 0;
+                                    int totalMovieCount = 0;
+                                    foreach (var item in groupItems)
+                                    {
+                                        totalMoviePrice += item.Price * item.Count;
+                                        totalMovieCount += item.Count;
+                                    }
+
+                                    <div class="movie-summary card mb-3">
+                                        <div class="card-header bg-light">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="mb-0 fw-bold">@movieName</h6>
+                                                <span class="badge bg-primary rounded-pill">@totalMovieCount tickets</span>
+                                            </div>
+                                        </div>
+                                        <ul class="list-group list-group-flush">
+                                            @foreach (var item in groupItems)
+                                            {
+                                                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="ticket-type-badge @GetTicketTypeClass(item.TicketType) me-2">@item.TicketType</span>
+                                                        <small>@item.Count × @item.Price.ToString("c")</small>
+                                                    </div>
+                                                    <span class="text-muted">@((item.Price * item.Count).ToString("c"))</span>
+                                                </li>
+                                            }
+                                            <li class="list-group-item d-flex justify-content-between bg-light">
+                                                <small class="fw-bold">Subtotal:</small>
+                                                <span class="fw-bold">@totalMoviePrice.ToString("c")</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                }
+
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h5 class="text-info mb-0">Total (USD)</h5>
+                                            <h5 class="text-info mb-0">@Model.OrderHeader.OrderTotal.ToString("c")</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-12 col-md-8 pt-2">
+                        <p style="color:maroon; font-size:14px;">
+                            "Book in Seconds, Enjoy for Hours!
+                        </p>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <button type="submit" value="Place Order" class="btn btn-primary form-control">Place Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
+
+<style>
+    .movie-summary {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: all 0.3s ease;
+    }
+
+        .movie-summary:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+    .ticket-type-badge {
+        display: inline-block;
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
+        color: white !important;
+        min-width: 80px;
+    }
+
+    .order-summary-container {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+</style>

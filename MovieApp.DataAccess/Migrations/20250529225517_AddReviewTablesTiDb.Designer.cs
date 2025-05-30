@@ -12,8 +12,8 @@ using MovieApp.DataAccess.Data;
 namespace MovieApp.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250529172207_AddReviewsTable")]
-    partial class AddReviewsTable
+    [Migration("20250529225517_AddReviewTablesTiDb")]
+    partial class AddReviewTablesTiDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

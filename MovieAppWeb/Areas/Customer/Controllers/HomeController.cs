@@ -93,40 +93,62 @@ namespace MovieAppWeb.Areas.Customer.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult Details(ShoppingCart cart)
+        public IActionResult Details(List<ShoppingCart> carts,int movieId)
         {
             //verify count 
-            if (cart.Count <= 0)
+            if (carts == null || carts.Count <= 0)
             {
                 TempData["error"] = "Please select at least one ticket.";
                 // retrieve movie data from db
-                cart.Movie = _unitOfWork.movieRepository.Get(
-                    m => m.Id == cart.MovieId,
+                ShoppingCart cart = new()
+                {
+                    Movie = _unitOfWork.movieRepository.Get(
+                    m => m.Id == movieId,
                     includeProperties: "Category"
-                );
+                )};
                 return View(cart);
             }
             //get login user info
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             //get userId
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            cart.ApplicationUserId = userId;
-            ShoppingCart shoppingCartFromDb = _unitOfWork.shoppingCartRepository.Get(x => x.ApplicationUserId == userId && x.MovieId == cart.MovieId);
-
+           
+            ShoppingCart shoppingCartFromDb = _unitOfWork.shoppingCartRepository.Get(x => x.ApplicationUserId == userId && x.MovieId == movieId);
             if (shoppingCartFromDb == null)
             {
                 //add new one
-                _unitOfWork.shoppingCartRepository.Add(cart);
-                _unitOfWork.Save();
+                foreach (var cart in carts)
+                {
+                    cart.ApplicationUserId = userId;
+                    _unitOfWork.shoppingCartRepository.Add(cart);
+                    _unitOfWork.Save();
+                }
                 //add shopping cart count into session
-                HttpContext.Session.SetInt32(SessionConstants.SessionCart, _unitOfWork.shoppingCartRepository.GetAll(x => x.ApplicationUserId == userId).Count());
+                HttpContext.Session.SetInt32(SessionConstants.SessionCart, _unitOfWork.shoppingCartRepository.GetAll(x => x.ApplicationUserId == userId).GroupBy(x=>x.MovieId).Count());
             }
             else
             {
+                var shoppingCartFromListDb = _unitOfWork.shoppingCartRepository.GetAll(x => x.ApplicationUserId == userId && x.MovieId == movieId);
+               
                 //update only increase the count
-                shoppingCartFromDb.Count += cart.Count;
-                _unitOfWork.shoppingCartRepository.Update(shoppingCartFromDb);
-                _unitOfWork.Save();
+                foreach (var cart in carts)
+                {
+                    var ShoppingCartDb = shoppingCartFromListDb.FirstOrDefault(x => x.TicketType == cart.TicketType);
+                    //add new item
+                    if (ShoppingCartDb == null)
+                    {
+                        cart.ApplicationUserId = userId;
+                        _unitOfWork.shoppingCartRepository.Add(cart);
+                        _unitOfWork.Save();
+                    }
+                    else
+                    {
+                        //update exist item 
+                        ShoppingCartDb.Count += cart.Count;
+                        _unitOfWork.shoppingCartRepository.Update(ShoppingCartDb);
+                        _unitOfWork.Save();
+                    }
+                }
             }
             TempData["success"] = "Shopping Cart Updated Successfully!!!";
             return RedirectToAction("Index");
