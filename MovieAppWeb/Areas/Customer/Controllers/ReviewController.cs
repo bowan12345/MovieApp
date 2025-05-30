@@ -57,7 +57,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public IActionResult Create(ReviewVM reviewVM)
         {
             // Add this at the very top for debugging
@@ -75,23 +75,12 @@ namespace MovieAppWeb.Areas.Customer.Controllers
                 return RedirectToAction("Details", "Movie", new { id = reviewVM.Review.MovieId });
             }
 
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.Review.Add(reviewVM.Review);
-                _unitOfWork.Save();
-                TempData["success"] = "Review created successfully!";
-                return RedirectToAction("Details", "Movie", new { id = reviewVM.Review.MovieId });
-            }
+            //add new a review
+            _unitOfWork.Review.Add(reviewVM.Review);
+            _unitOfWork.Save();
+            TempData["success"] = "Review created successfully!";
+            return RedirectToAction("Details", "Home", new { movieId = reviewVM.Review.MovieId });
 
-            // Add debugging for ModelState errors
-            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-            {
-                System.Diagnostics.Debug.WriteLine($"ModelState Error: {error.ErrorMessage}");
-            }
-
-            // Reload dropdown if validation fails
-            reviewVM.MovieList = GetMovieSelectList();
-            return View(reviewVM);
         }
 
         // GET: Review/Edit/5
