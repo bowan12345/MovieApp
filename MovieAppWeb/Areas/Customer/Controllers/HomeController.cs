@@ -56,12 +56,22 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             movie.LikeCount = voteCounts.likeCount;
             movie.DislikeCount = voteCounts.dislikeCount;
 
+            // Get the latest 10 reviews for this movie
+            var reviews = _unitOfWork.reviewRepository.GetAll(r => r.MovieId == movieId, includeProperties: "ApplicationUser")
+                .OrderByDescending(r => r.CreatedDate)
+                .Take(10)
+                .ToList();
+
             ShoppingCart cart = new()
             {
                 Movie = movie,
                 Count = 1,
                 MovieId = movieId
             };
+
+            // Pass reviews to the view
+            ViewBag.Reviews = reviews;
+
 
             // Check if current user has voted (for authenticated users)
             if (User.Identity.IsAuthenticated)
@@ -326,6 +336,8 @@ namespace MovieAppWeb.Areas.Customer.Controllers
                 return Json(new { success = false, message = "An error occurred while processing your vote" });
             }
         }
+
+
 
         public IActionResult Privacy()
         {

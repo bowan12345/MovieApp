@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "All Reviews";
+}
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Details" asp-route-movieId="@ViewBag.Movie.Id">@ViewBag.Movie.Name</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">All Reviews</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="bi bi-chat-quote-fill text-primary"></i>
+                    Reviews for "@ViewBag.Movie.Name"
+                </h2>
+                <a asp-controller="Review" asp-action="Create" asp-route-movieId="@ViewBag.Movie.Id" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Write a Review
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    @if (ViewBag.Reviews != null && ViewBag.Reviews.Count > 0)
+                    {
+                        <div class="reviews-list">
+                            @foreach (var review in ViewBag.Reviews)
+                            {
+                                <div class="review-item p-3 mb-3 border-bottom">
+                                    <div class="row">
+                                        <!-- Movie Image Column -->
+                                        <div class="col-md-2 col-sm-3 mb-3 mb-md-0">
+                                            <img src="@ViewBag.Movie.ImageUrl" alt="@ViewBag.Movie.Name" class="img-fluid rounded shadow-sm" style="max-height: 120px; object-fit: cover;" />
+                                        </div>
+
+                                        <!-- Review Content Column -->
+                                        <div class="col-md-10 col-sm-9">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div>
+                                                    <div class="fw-bold fs-5">@review.Title</div>
+                                                    <div class="text-muted small">
+                                                        By: @(review.ApplicationUser?.Name ?? "Anonymous") | @review.CreatedDate.ToString("MMM dd, yyyy")
+                                                    </div>
+                                                </div>
+                                                <div class="rating-display">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= review.Rating)
+                                                        {
+                                                            <i class="bi bi-star-fill text-warning"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-star text-muted"></i>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                            <p class="mb-0">@review.Content</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info text-center p-5">
+                            <i class="bi bi-chat-square-text fs-1 d-block mb-3"></i>
+                            <p class="mb-3">No reviews yet for this movie.</p>
+                            <a asp-controller="Review" asp-action="Create" asp-route-movieId="@ViewBag.Movie.Id" class="btn btn-primary">
+                                Be the first to write a review!
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rating-display .bi-star-fill {
+        color: #ffc107;
+    }
+
+    .review-item:last-child {
+        border-bottom: none !important;
+    }
+</style>

@@ -100,218 +100,299 @@
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="rating-section bg-light p-4 rounded shadow-sm">
-                        <h4 class="text-primary mb-3">
-                            <i class="bi bi-heart-fill"></i> Rate this Movie
-                        </h4>
-
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <button type="button" id="likeBtn" class="btn btn-outline-success d-flex align-items-center gap-2" onclick="voteMovie(@Model.MovieId, true)">
-                                    <i class="bi bi-hand-thumbs-up-fill"></i>
-                                    <span id="likeCount">@Model.Movie.LikeCount</span>
-                                    <span class="d-none d-sm-inline">Like</span>
-                                </button>
-
-                                <button type="button" id="dislikeBtn" class="btn btn-outline-danger d-flex align-items-center gap-2" onclick="voteMovie(@Model.MovieId, false)">
-                                    <i class="bi bi-hand-thumbs-down-fill"></i>
-                                    <span id="dislikeCount">@Model.Movie.DislikeCount</span>
-                                    <span class="d-none d-sm-inline">Dislike</span>
-                                </button>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h4 class="text-primary mb-0">
+                                    <i class="bi bi-heart-fill"></i> Rate this Movie
+                                </h4>
                             </div>
+                            <div class="col-md-6 text-end">
+                                <span class="badge bg-primary rounded-pill">@(ViewBag.Reviews != null ? ViewBag.Reviews.Count : 0) Reviews</span>
+                            </div>
+                        </div>
 
-                            <div id="voteMessage" class="alert d-none"></div>
-                        }
-                        else
-                        {
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <div class="btn btn-outline-success disabled d-flex align-items-center gap-2">
-                                    <i class="bi bi-hand-thumbs-up-fill"></i>
-                                    <span>@Model.Movie.LikeCount</span>
-                                    <span class="d-none d-sm-inline">Likes</span>
+                        <div class="row">
+                            <!-- Buttons Row -->
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <span class="badge bg-secondary rounded-pill">@ViewBag.TotalReviews Total Reviews</span>
                                 </div>
 
-                                <div class="btn btn-outline-danger disabled d-flex align-items-center gap-2">
-                                    <i class="bi bi-hand-thumbs-down-fill"></i>
-                                    <span>@Model.Movie.DislikeCount</span>
-                                    <span class="d-none d-sm-inline">Dislikes</span>
-                                </div>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <div class="d-flex align-items-center gap-2 mb-4">
+                                        <button type="button" id="likeBtn" class="btn btn-outline-success d-flex align-items-center gap-1" onclick="voteMovie(@Model.MovieId, true)">
+                                            <i class="bi bi-hand-thumbs-up-fill"></i>
+                                            <span id="likeCount">@Model.Movie.LikeCount</span>
+                                        </button>
+
+                                        <button type="button" id="dislikeBtn" class="btn btn-outline-danger d-flex align-items-center gap-1" onclick="voteMovie(@Model.MovieId, false)">
+                                            <i class="bi bi-hand-thumbs-down-fill"></i>
+                                            <span id="dislikeCount">@Model.Movie.DislikeCount</span>
+                                        </button>
+
+                                        <a asp-controller="Review" asp-action="Create" asp-route-movieId="@Model.MovieId" class="btn btn-outline-primary d-flex align-items-center gap-1">
+                                            <i class="bi bi-star-fill"></i>
+                                            <span>Write a Review</span>
+                                        </a>
+                                        <a asp-controller="Review" asp-action="AllReview" asp-route-movieId="@Model.MovieId" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 ms-auto">
+                                            <i class="bi bi-eye"></i> View All @ViewBag.TotalReviews Reviews
+                                        </a>
+                                    </div>
+
+                                    <div id="voteMessage" class="alert d-none"></div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center gap-2 mb-4">
+                                        <div class="btn btn-outline-success disabled d-flex align-items-center gap-1">
+                                            <i class="bi bi-hand-thumbs-up-fill"></i>
+                                            <span>@Model.Movie.LikeCount</span>
+                                        </div>
+
+                                        <div class="btn btn-outline-danger disabled d-flex align-items-center gap-1">
+                                            <i class="bi bi-hand-thumbs-down-fill"></i>
+                                            <span>@Model.Movie.DislikeCount</span>
+                                        </div>
+
+                                        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-primary d-flex align-items-center gap-1">
+                                            <i class="bi bi-star-fill"></i>
+                                            <span>Write a Review</span>
+                                        </a>
+
+                                        <a href="#reviews-section" class="btn btn-outline-secondary d-flex align-items-center gap-1 ms-auto">
+                                            <i class="bi bi-chat-square-text"></i>
+                                            <span>View All Reviews</span>
+                                        </a>
+                                    </div>
+
+                                    <div class="alert alert-info mb-4">
+                                        <i class="bi bi-info-circle"></i>
+                                        Please <a asp-area="Identity" asp-page="/Account/Login" class="alert-link">login</a> to rate or review this movie.
+                                    </div>
+                                }
                             </div>
 
-                            <div class="alert alert-info mb-0">
-                                <i class="bi bi-info-circle"></i>
-                                Please <a asp-area="Identity" asp-page="/Account/Login" class="alert-link">login</a> to rate this movie.
+                            <!-- Reviews Section -->
+                            <div class="col-12" id="reviews-section">
+                                <div class="card border-0 shadow-sm mb-4">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0"><i class="bi bi-chat-quote-fill"></i> Latest Reviews</h5>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="reviews-container" style="max-height: 350px; overflow-y: auto;">
+                                            @if (ViewBag.Reviews != null && ViewBag.Reviews.Count > 0)
+                                            {
+                                                foreach (var review in ViewBag.Reviews)
+                                                {
+                                                    <div class="p-3 border-bottom">
+                                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                                            <div>
+                                                                <h6 class="mb-1 fw-bold">@(review.ApplicationUser?.Name ?? "Anonymous")</h6>
+                                                                <div class="rating-display mb-1">
+                                                                    @for (int i = 1; i <= 5; i++)
+                                                                    {
+                                                                        <i class="bi bi-star-fill @(i <= review.Rating ? "text-warning" : "text-muted")" style="font-size: 0.9rem;"></i>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                            <small class="text-muted">@review.CreatedDate.ToString("MMM dd, yyyy")</small>
+                                                        </div>
+                                                        <h6 class="fw-semibold text-primary">@review.Title</h6>
+                                                        <p class="mb-0">@review.Content</p>
+                                                    </div>
+                                                }
+
+                                                @if (ViewBag.TotalReviews > 2)
+                                                {
+                                                    <div class="text-center mt-3">
+                                                        <a asp-controller="Review" asp-action="All" asp-route-movieId="@Model.MovieId" class="btn btn-outline-primary btn-sm">
+                                                            <i class="bi bi-eye"></i> View All @ViewBag.TotalReviews Reviews
+                                                        </a>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="alert alert-light text-center">
+                                                    <i class="bi bi-chat-square-text"></i>
+                                                    No reviews yet. Be the first to review this movie!
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        }
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Enhanced Ticket Purchase Section -->
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm rounded-4">
-                        <div class="card-body p-4">
-                            <h4 class="text-primary mb-4">
-                                <i class="bi bi-ticket-perforated"></i> Get Your Tickets
-                            </h4>
+                    <!-- Enhanced Ticket Purchase Section -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm rounded-4">
+                                <div class="card-body p-4">
+                                    <h4 class="text-primary mb-4">
+                                        <i class="bi bi-ticket-perforated"></i> Get Your Tickets
+                                    </h4>
 
-                            <!-- Ticket Types -->
-                            <div class="ticket-types">
-                                <!-- Adult Tickets -->
-                                <div class="ticket-type mb-3 p-3 rounded-3 border border-primary" style="background: rgba(13, 110, 253, 0.05); transition: all 0.3s ease;">
-                                    <div class="row align-items-center">
-                                        <div class="col-12 col-md-4">
-                                            <div class="ticket-info">
-                                                <h5 class="mb-1 text-primary">
-                                                    <i class="bi bi-person-fill me-2"></i>Adult
-                                                </h5>
-                                                <p class="text-muted mb-0 small">Ages 18-64</p>
+                                    <!-- Ticket Types -->
+                                    <div class="ticket-types">
+                                        <!-- Adult Tickets -->
+                                        <div class="ticket-type mb-3 p-3 rounded-3 border border-primary" style="background: rgba(13, 110, 253, 0.05); transition: all 0.3s ease;">
+                                            <div class="row align-items-center">
+                                                <div class="col-12 col-md-4">
+                                                    <div class="ticket-info">
+                                                        <h5 class="mb-1 text-primary">
+                                                            <i class="bi bi-person-fill me-2"></i>Adult
+                                                        </h5>
+                                                        <p class="text-muted mb-0 small">Ages 18-64</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-3 text-center">
+                                                    <div class="ticket-price">
+                                                        <span class="fs-5 fw-bold text-primary">$@Model.Movie.Price.ToString("0.00")</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-3">
+                                                    <div class="quantity-selector d-flex align-items-center justify-content-center">
+                                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeTicketQuantity('adult', -1)">
+                                                            <i class="bi bi-dash"></i>
+                                                        </button>
+                                                        <span class="mx-3 fw-semibold" id="adult-qty">0</span>
+                                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeTicketQuantity('adult', 1)">
+                                                            <i class="bi bi-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-2 text-end">
+                                                    <div class="subtotal fw-bold text-primary" id="adult-subtotal">$0.00</div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-12 col-md-3 text-center">
-                                            <div class="ticket-price">
-                                                <span class="fs-5 fw-bold text-primary">$@Model.Movie.Price.ToString("0.00")</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-3">
-                                            <div class="quantity-selector d-flex align-items-center justify-content-center">
-                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeTicketQuantity('adult', -1)">
-                                                    <i class="bi bi-dash"></i>
-                                                </button>
-                                                <span class="mx-3 fw-semibold" id="adult-qty">0</span>
-                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="changeTicketQuantity('adult', 1)">
-                                                    <i class="bi bi-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-2 text-end">
-                                            <div class="subtotal fw-bold text-primary" id="adult-subtotal">$0.00</div>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <!-- Child Tickets -->
-                                <div class="ticket-type mb-3 p-3 rounded-3 border border-success" style="background: rgba(25, 135, 84, 0.05); transition: all 0.3s ease;">
-                                    <div class="row align-items-center">
-                                        <div class="col-12 col-md-4">
-                                            <div class="ticket-info">
-                                                <h5 class="mb-1 text-success">
-                                                    <i class="bi bi-person-hearts me-2"></i>Children
-                                                </h5>
-                                                <p class="text-muted mb-0 small">Ages 3-12</p>
+                                        <!-- Child Tickets -->
+                                        <div class="ticket-type mb-3 p-3 rounded-3 border border-success" style="background: rgba(25, 135, 84, 0.05); transition: all 0.3s ease;">
+                                            <div class="row align-items-center">
+                                                <div class="col-12 col-md-4">
+                                                    <div class="ticket-info">
+                                                        <h5 class="mb-1 text-success">
+                                                            <i class="bi bi-person-hearts me-2"></i>Children
+                                                        </h5>
+                                                        <p class="text-muted mb-0 small">Ages 3-12</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-3 text-center">
+                                                    <div class="ticket-price">
+                                                        <span class="fs-5 fw-bold text-success">$@((Model.Movie.Price * 0.7).ToString("0.00"))</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-3">
+                                                    <div class="quantity-selector d-flex align-items-center justify-content-center">
+                                                        <button type="button" class="btn btn-outline-success btn-sm" onclick="changeTicketQuantity('child', -1)">
+                                                            <i class="bi bi-dash"></i>
+                                                        </button>
+                                                        <span class="mx-3 fw-semibold" id="child-qty">0</span>
+                                                        <button type="button" class="btn btn-outline-success btn-sm" onclick="changeTicketQuantity('child', 1)">
+                                                            <i class="bi bi-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-2 text-end">
+                                                    <div class="subtotal fw-bold text-success" id="child-subtotal">$0.00</div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-12 col-md-3 text-center">
-                                            <div class="ticket-price">
-                                                <span class="fs-5 fw-bold text-success">$@((Model.Movie.Price * 0.7).ToString("0.00"))</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-3">
-                                            <div class="quantity-selector d-flex align-items-center justify-content-center">
-                                                <button type="button" class="btn btn-outline-success btn-sm" onclick="changeTicketQuantity('child', -1)">
-                                                    <i class="bi bi-dash"></i>
-                                                </button>
-                                                <span class="mx-3 fw-semibold" id="child-qty">0</span>
-                                                <button type="button" class="btn btn-outline-success btn-sm" onclick="changeTicketQuantity('child', 1)">
-                                                    <i class="bi bi-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-2 text-end">
-                                            <div class="subtotal fw-bold text-success" id="child-subtotal">$0.00</div>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <!-- Senior Tickets -->
-                                <div class="ticket-type mb-3 p-3 rounded-3 border border-info" style="background: rgba(13, 202, 240, 0.05); transition: all 0.3s ease;">
-                                    <div class="row align-items-center">
-                                        <div class="col-12 col-md-4">
-                                            <div class="ticket-info">
-                                                <h5 class="mb-1 text-info">
-                                                    <i class="bi bi-person-walking me-2"></i>Seniors
-                                                </h5>
-                                                <p class="text-muted mb-0 small">Ages 65+</p>
+                                        <!-- Senior Tickets -->
+                                        <div class="ticket-type mb-3 p-3 rounded-3 border border-info" style="background: rgba(13, 202, 240, 0.05); transition: all 0.3s ease;">
+                                            <div class="row align-items-center">
+                                                <div class="col-12 col-md-4">
+                                                    <div class="ticket-info">
+                                                        <h5 class="mb-1 text-info">
+                                                            <i class="bi bi-person-walking me-2"></i>Seniors
+                                                        </h5>
+                                                        <p class="text-muted mb-0 small">Ages 65+</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-3 text-center">
+                                                    <div class="ticket-price">
+                                                        <span class="fs-5 fw-bold text-info">$@((Model.Movie.Price * 0.8).ToString("0.00"))</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-3">
+                                                    <div class="quantity-selector d-flex align-items-center justify-content-center">
+                                                        <button type="button" class="btn btn-outline-info btn-sm" onclick="changeTicketQuantity('senior', -1)">
+                                                            <i class="bi bi-dash"></i>
+                                                        </button>
+                                                        <span class="mx-3 fw-semibold" id="senior-qty">0</span>
+                                                        <button type="button" class="btn btn-outline-info btn-sm" onclick="changeTicketQuantity('senior', 1)">
+                                                            <i class="bi bi-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-2 text-end">
+                                                    <div class="subtotal fw-bold text-info" id="senior-subtotal">$0.00</div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-12 col-md-3 text-center">
-                                            <div class="ticket-price">
-                                                <span class="fs-5 fw-bold text-info">$@((Model.Movie.Price * 0.8).ToString("0.00"))</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-3">
-                                            <div class="quantity-selector d-flex align-items-center justify-content-center">
-                                                <button type="button" class="btn btn-outline-info btn-sm" onclick="changeTicketQuantity('senior', -1)">
-                                                    <i class="bi bi-dash"></i>
-                                                </button>
-                                                <span class="mx-3 fw-semibold" id="senior-qty">0</span>
-                                                <button type="button" class="btn btn-outline-info btn-sm" onclick="changeTicketQuantity('senior', 1)">
-                                                    <i class="bi bi-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-2 text-end">
-                                            <div class="subtotal fw-bold text-info" id="senior-subtotal">$0.00</div>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <!-- Student Tickets -->
-                                <div class="ticket-type mb-4 p-3 rounded-3 border border-warning" style="background: rgba(255, 193, 7, 0.05); transition: all 0.3s ease;">
-                                    <div class="row align-items-center">
-                                        <div class="col-12 col-md-4">
-                                            <div class="ticket-info">
-                                                <h5 class="mb-1 text-warning">
-                                                    <i class="bi bi-mortarboard-fill me-2"></i>Students
-                                                </h5>
-                                                <p class="text-muted mb-0 small">Valid student ID required</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-3 text-center">
-                                            <div class="ticket-price">
-                                                <span class="fs-5 fw-bold text-warning">$@((Model.Movie.Price * 0.75).ToString("0.00"))</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-3">
-                                            <div class="quantity-selector d-flex align-items-center justify-content-center">
-                                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="changeTicketQuantity('student', -1)">
-                                                    <i class="bi bi-dash"></i>
-                                                </button>
-                                                <span class="mx-3 fw-semibold" id="student-qty">0</span>
-                                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="changeTicketQuantity('student', 1)">
-                                                    <i class="bi bi-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-2 text-end">
-                                            <div class="subtotal fw-bold text-warning" id="student-subtotal">$0.00</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Summary Section -->
-                            <div class="summary-section bg-primary text-white p-4 rounded-3">
-                                <div class="row align-items-center">
-                                    <div class="col-12 col-md-4">
-                                        <div class="summary-info">
-                                            <h6 class="mb-2">Order Summary</h6>
-                                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                                <span>Total Tickets:</span>
-                                                <span class="fw-bold" id="total-tickets">0</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span>Total Price:</span>
-                                                <span class="fs-4 fw-bold" id="total-price">$0.00</span>
+                                        <!-- Student Tickets -->
+                                        <div class="ticket-type mb-4 p-3 rounded-3 border border-warning" style="background: rgba(255, 193, 7, 0.05); transition: all 0.3s ease;">
+                                            <div class="row align-items-center">
+                                                <div class="col-12 col-md-4">
+                                                    <div class="ticket-info">
+                                                        <h5 class="mb-1 text-warning">
+                                                            <i class="bi bi-mortarboard-fill me-2"></i>Students
+                                                        </h5>
+                                                        <p class="text-muted mb-0 small">Valid student ID required</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-3 text-center">
+                                                    <div class="ticket-price">
+                                                        <span class="fs-5 fw-bold text-warning">$@((Model.Movie.Price * 0.75).ToString("0.00"))</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-3">
+                                                    <div class="quantity-selector d-flex align-items-center justify-content-center">
+                                                        <button type="button" class="btn btn-outline-warning btn-sm" onclick="changeTicketQuantity('student', -1)">
+                                                            <i class="bi bi-dash"></i>
+                                                        </button>
+                                                        <span class="mx-3 fw-semibold" id="student-qty">0</span>
+                                                        <button type="button" class="btn btn-outline-warning btn-sm" onclick="changeTicketQuantity('student', 1)">
+                                                            <i class="bi bi-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-2 text-end">
+                                                    <div class="subtotal fw-bold text-warning" id="student-subtotal">$0.00</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-md-8">
-                                        <div class="text-end">
-                                            <button type="submit" class="btn btn-light btn-lg px-5 py-3 fw-bold text-primary" id="add-to-cart-btn" disabled>
-                                                <i class="bi bi-cart-plus me-2"></i> Add to Cart
-                                            </button>
+
+                                    <!-- Summary Section -->
+                                    <div class="summary-section bg-primary text-white p-4 rounded-3">
+                                        <div class="row align-items-center">
+                                            <div class="col-12 col-md-4">
+                                                <div class="summary-info">
+                                                    <h6 class="mb-2">Order Summary</h6>
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <span>Total Tickets:</span>
+                                                        <span class="fw-bold" id="total-tickets">0</span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span>Total Price:</span>
+                                                        <span class="fs-4 fw-bold" id="total-price">$0.00</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-8">
+                                                <div class="text-end">
+                                                    <button type="submit" class="btn btn-light btn-lg px-5 py-3 fw-bold text-primary" id="add-to-cart-btn" disabled>
+                                                        <i class="bi bi-cart-plus me-2"></i> Add to Cart
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -320,17 +401,15 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Hidden Fields for Form Submission -->
-    <input hidden asp-for="MovieId" name="movieId" />
-    <input hidden asp-for="Count" id="hidden-count" />
+            <!-- Hidden Fields for Form Submission -->
+            <input hidden asp-for="MovieId" name="movieId" />
+            <input hidden asp-for="Count" id="hidden-count" />
 
-    <!-- Shopping cart collection container -->
-    <div id="shopping-cart-container">
-        <!-- Shopping cart objects will be generated here -->
-    </div>
+            <!-- Shopping cart collection container -->
+            <div id="shopping-cart-container">
+                <!-- Shopping cart objects will be generated here -->
+            </div>
 </form>
 
 <style>
@@ -347,6 +426,49 @@
         background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
     }
 
+    /* Reviews styling */
+    .reviews-container {
+        scrollbar-width: thin;
+        scrollbar-color: #0d6efd #f8f9fa;
+    }
+
+        .reviews-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .reviews-container::-webkit-scrollbar-track {
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .reviews-container::-webkit-scrollbar-thumb {
+            background-color: #0d6efd;
+            border-radius: 10px;
+        }
+
+    .review-card {
+        transition: all 0.2s ease;
+    }
+
+        .review-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+    .rating-display .bi-star-fill {
+        color: #ffc107 !important;
+    }
+
+    .review-title {
+        font-weight: 600;
+        margin-top: 8px;
+        color: #333;
+    }
+
+    .review-content {
+        margin-top: 5px;
+        line-height: 1.4;
+    }
 </style>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -357,7 +479,7 @@
         child: @(Model.Movie.Price * 0.7),
         senior: @(Model.Movie.Price * 0.8),
         student: @(Model.Movie.Price * 0.75)
-        };
+                    };
 
     let ticketQuantities = {
         adult: 0,
@@ -373,7 +495,7 @@
         <text>
                     var userVote = "@ViewBag.UserVote"; // like / dislike / none
                     switch (userVote) {
-                            case "like":
+                                                    case "like":
                     updateButtonStates(true);
                     break;
                     case "dislike":
@@ -383,7 +505,7 @@
                     default:
                     updateButtonStates(null);
                     break;
-                            }
+                                                    }
         </text>
     }
             updateTicketDisplay();

@@ -15,7 +15,7 @@ namespace MovieApp.DataAccess.Repository.IRepository
         IOrderHeaderRepository orderHeaderRepository { get; }
         IOrderDetailRepository orderDetailRepository { get; }
         IMovieVoteRepository movieVoteRepository { get; }
-        IReviewRepository Review { get; }
+        IReviewRepository reviewRepository { get; }
         void Save();
     }
 }

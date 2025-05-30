@@ -16,43 +16,55 @@
                     <form asp-action="Create" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                        <div class="form-group mb-3">
-                            <label asp-for="Review.MovieId" class="form-label">Select Movie</label>
-                            <select asp-for="Review.MovieId" asp-items="Model.MovieList" class="form-select">
-                                <option value="">-- Select a Movie --</option>
-                            </select>
-                            <span asp-validation-for="Review.MovieId" class="text-danger"></span>
-                        </div>
+                        <!-- Hidden field for MovieId -->
+                        <input type="hidden" asp-for="@Model.Review.MovieId" />
+
+                        <!-- Movie info display -->
+                        @if (Model.Review.Movie != null)
+                        {
+                            <div class="movie-info-card mb-4 p-3 border rounded bg-light">
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(Model.Review.Movie.ImageUrl))
+                                    {
+                                        <img src="@Model.Review.Movie.ImageUrl" alt="@Model.Review.Movie.Name" class="movie-thumbnail me-3" style="width: 60px; height: 90px; object-fit: cover;" />
+                                    }
+                                    <div>
+                                        <h5 class="mb-1">@Model.Review.Movie.Name</h5>
+                                        <p class="text-muted small mb-0">You're writing a review for this movie</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
 
                         <div class="form-group mb-3">
-                            <label asp-for="Review.Rating" class="form-label">Rating</label>
+                            <label asp-for="@Model.Review.Rating" class="form-label">Rating</label>
                             <div class="rating-container">
                                 <div class="star-rating">
-                                    <input type="radio" asp-for="Review.Rating" value="5" id="star5">
+                                    <input type="radio" asp-for="@Model.Review.Rating" value="5" id="star5">
                                     <label for="star5" title="5 stars">★</label>
-                                    <input type="radio" asp-for="Review.Rating" value="4" id="star4">
+                                    <input type="radio" asp-for="@Model.Review.Rating" value="4" id="star4">
                                     <label for="star4" title="4 stars">★</label>
-                                    <input type="radio" asp-for="Review.Rating" value="3" id="star3">
+                                    <input type="radio" asp-for="@Model.Review.Rating" value="3" id="star3">
                                     <label for="star3" title="3 stars">★</label>
-                                    <input type="radio" asp-for="Review.Rating" value="2" id="star2">
+                                    <input type="radio" asp-for="@Model.Review.Rating" value="2" id="star2">
                                     <label for="star2" title="2 stars">★</label>
-                                    <input type="radio" asp-for="Review.Rating" value="1" id="star1">
+                                    <input type="radio" asp-for="@Model.Review.Rating" value="1" id="star1">
                                     <label for="star1" title="1 star">★</label>
                                 </div>
                             </div>
-                            <span asp-validation-for="Review.Rating" class="text-danger"></span>
+                            <span asp-validation-for="@Model.Review.Rating" class="text-danger"></span>
                         </div>
 
                         <div class="form-group mb-3">
-                            <label asp-for="Review.Title" class="form-label">Review Title</label>
-                            <input asp-for="Review.Title" class="form-control" placeholder="Enter a brief title for your review">
-                            <span asp-validation-for="Review.Title" class="text-danger"></span>
+                            <label asp-for="@Model.Review.Title" class="form-label">Review Title</label>
+                            <input asp-for="@Model.Review.Title" class="form-control" placeholder="Enter a brief title for your review">
+                            <span asp-validation-for="@Model.Review.Title" class="text-danger"></span>
                         </div>
 
                         <div class="form-group mb-4">
-                            <label asp-for="Review.Content" class="form-label">Review Content</label>
-                            <textarea asp-for="Review.Content" class="form-control" rows="6" placeholder="Write your detailed review here..."></textarea>
-                            <span asp-validation-for="Review.Content" class="text-danger"></span>
+                            <label asp-for="@Model.Review.Content" class="form-label">Review Content</label>
+                            <textarea asp-for="@Model.Review.Content" class="form-control" rows="6" placeholder="Write your detailed review here..."></textarea>
+                            <span asp-validation-for="@Model.Review.Content" class="text-danger"></span>
                         </div>
 
                         <div class="d-flex justify-content-between">

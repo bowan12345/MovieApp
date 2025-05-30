@@ -36,6 +36,6 @@ namespace MovieApp.Models
 
         // Navigation properties
         public virtual Movie Movie { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
     }
 }

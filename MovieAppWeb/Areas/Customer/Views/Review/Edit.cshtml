@@ -9,12 +9,12 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow">
-                <div class="card-header bg-warning text-dark">
+                <div class="card-header bg-primary text-white">
                     <h3 class="mb-0"><i class="fas fa-edit"></i> Edit Review</h3>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> 
+                    <div class="alert" style="background-color: rgba(13, 110, 253, 0.1); border-left: 4px solid #0d6efd;">
+                        <i class="fas fa-info-circle"></i>
                         <strong>Movie:</strong> @Model.Review.Movie.Name
                     </div>
 
@@ -23,7 +23,7 @@
                         <input type="hidden" asp-for="Review.MovieId" />
                         <input type="hidden" asp-for="Review.UserId" />
                         <input type="hidden" asp-for="Review.CreatedDate" />
-                        
+
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <div class="form-group mb-3">
@@ -64,7 +64,7 @@
                         <div class="row mb-3">
                             <div class="col-sm-6">
                                 <small class="text-muted">
-                                    <i class="fas fa-calendar-plus"></i> 
+                                    <i class="fas fa-calendar-plus"></i>
                                     Created: @Model.Review.CreatedDate.ToString("MMM dd, yyyy 'at' h:mm tt")
                                 </small>
                             </div>
@@ -72,7 +72,7 @@
                             {
                                 <div class="col-sm-6 text-end">
                                     <small class="text-muted">
-                                        <i class="fas fa-calendar-edit"></i> 
+                                        <i class="fas fa-calendar-edit"></i>
                                         Last updated: @Model.Review.UpdatedDate.Value.ToString("MMM dd, yyyy 'at' h:mm tt")
                                     </small>
                                 </div>
@@ -81,7 +81,7 @@
 
                         <div class="d-flex justify-content-between">
                             <div>
-                                <a asp-action="MyReviews" class="btn btn-secondary me-2">
+                                <a asp-action="MyReviews" class="btn btn-outline-primary me-2">
                                     <i class="fas fa-arrow-left"></i> Back to My Reviews
                                 </a>
                                 <a asp-controller="Movie" asp-action="Details" asp-route-id="@Model.Review.MovieId" class="btn btn-outline-info">
@@ -89,7 +89,7 @@
                                 </a>
                             </div>
                             <div>
-                                <a asp-action="Delete" asp-route-id="@Model.Review.ReviewId" class="btn btn-outline-danger me-2">
+                                <a asp-controller="Review" asp-action="Delete" asp-route-id="@Model.Review.ReviewId" class="btn btn-outline-danger me-2">
                                     <i class="fas fa-trash"></i> Delete
                                 </a>
                                 <button type="submit" class="btn btn-warning">
@@ -113,20 +113,20 @@
         color: #ddd;
     }
 
-    .star-rating input {
-        display: none;
-    }
+        .star-rating input {
+            display: none;
+        }
 
-    .star-rating label {
-        cursor: pointer;
-        transition: color 0.2s;
-    }
+        .star-rating label {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
 
-    .star-rating label:hover,
-    .star-rating label:hover ~ label,
-    .star-rating input:checked ~ label {
-        color: #ffc107;
-    }
+            .star-rating label:hover,
+            .star-rating label:hover ~ label,
+            .star-rating input:checked ~ label {
+                color: #ffc107;
+            }
 
     .card {
         border: none;
@@ -137,26 +137,28 @@
         border-radius: 10px 10px 0 0 !important;
     }
 
-    .alert-info {
-        border-left: 4px solid #0dcaf0;
-        background-color: #e7f3ff;
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
     }
 </style>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
     <script>
         // Update star display on page load
-        $(document).ready(function() {
+        $(document).ready(function () {
             updateStarDisplay();
         });
-        
+
         // Update star display when rating changes
-        $('input[name="Review.Rating"]').change(function() {
+        $('input[name="Review.Rating"]').change(function () {
             updateStarDisplay();
         });
-        
+
         function updateStarDisplay() {
             var rating = $('input[name="Review.Rating"]:checked').val();
             $('.star-rating label').removeClass('selected');

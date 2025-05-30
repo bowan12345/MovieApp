@@ -20,7 +20,7 @@ namespace MovieApp.DataAccess.Repository
         public async Task<IEnumerable<Review>> GetReviewsByMovieAsync(int movieId)
         {
             return await _db.Reviews
-                .Include(r => r.User)
+                .Include(r => r.ApplicationUser)
                 .Include(r => r.Movie)
                 .Where(r => r.MovieId == movieId)
                 .OrderByDescending(r => r.CreatedDate)
@@ -40,7 +40,7 @@ namespace MovieApp.DataAccess.Repository
         {
             return await _db.Reviews
                 .Include(r => r.Movie)
-                .Include(r => r.User)
+                .Include(r => r.ApplicationUser)
                 .FirstOrDefaultAsync(r => r.MovieId == movieId && r.UserId == userId);
         }
 

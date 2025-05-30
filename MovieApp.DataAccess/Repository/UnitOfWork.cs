@@ -18,7 +18,7 @@ namespace MovieApp.DataAccess.Repository
         public IOrderHeaderRepository orderHeaderRepository { get; private set; }
         public IOrderDetailRepository orderDetailRepository { get; private set; }
         public IMovieVoteRepository movieVoteRepository { get; private set; }
-        public IReviewRepository Review { get; private set; }
+        public IReviewRepository reviewRepository { get; private set; }
 
         public UnitOfWork(ApplicationDbContext db)
         {
@@ -30,7 +30,7 @@ namespace MovieApp.DataAccess.Repository
             orderHeaderRepository = new OrderHeaderRepository(_db);
             orderDetailRepository = new OrderDetailRepository(_db);
             movieVoteRepository = new MovieVoteRepository(_db);
-            Review = new ReviewRepository(_db);
+            reviewRepository = new ReviewRepository(_db);
         }
 
         public void Save()
