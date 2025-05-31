@@ -123,7 +123,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             //get login user info
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-
+           
             //create a shoppinglist return obj
             ShoppingCartVM = new ShoppingCartVM
             {
@@ -162,14 +162,15 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             //get login user info
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+           
+            // assemble user address info
+            ApplicationUser applicationUser = _unitOfWork.applicationUserRepository.Get(u => u.Id == userId);
+            ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
+            ShoppingCartVM.OrderHeader.ApplicationUserId = applicationUser.Id;
 
             //create a shoppinglist return obj
             ShoppingCartVM.ShoppingCartList = _unitOfWork.shoppingCartRepository.GetAll(u => u.ApplicationUserId == userId,
             includeProperties: "Movie");
-
-            ShoppingCartVM.OrderHeader.OrderDate = System.DateTime.Now;
-            ShoppingCartVM.OrderHeader.ApplicationUserId = userId;
-
 
             //calculate the total price
             foreach (var cart in ShoppingCartVM.ShoppingCartList)
@@ -177,10 +178,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
                 cart.Price = GetPriceBasedOnQuantity(cart);
                 ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }
-
-            // assemble user address info
-            ApplicationUser applicationUser = _unitOfWork.applicationUserRepository.Get(u => u.Id == userId);
-            
+           
             //customer
             ShoppingCartVM.OrderHeader.PaymentStatus = OrderStatus.PaymentStatusPending;
             ShoppingCartVM.OrderHeader.OrderStatus = OrderStatus.StatusPending;
@@ -189,7 +187,8 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             //save orderheader to database
             _unitOfWork.orderHeaderRepository.Add(ShoppingCartVM.OrderHeader);
             _unitOfWork.Save();
-
+           /* TempData["error"] = "UserID:::" + ShoppingCartVM.OrderHeader.ApplicationUserId?.ToString();
+            return RedirectToAction(nameof(Index));*/
 
             //save order details to the database
             foreach (var cart in ShoppingCartVM.ShoppingCartList)
@@ -206,7 +205,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
                 _unitOfWork.Save();
             }
 
-            //customer  Azure domain 
+            //customer  Azure domain  
             var domain = "https://localhost:7194/";
             var options = new SessionCreateOptions
             {
@@ -247,10 +246,10 @@ namespace MovieAppWeb.Areas.Customer.Controllers
 
 
         //after payment successfully, recall to update payment status
+        [HttpGet]
         public IActionResult OrderConfirmation(int id)
         {
             OrderHeader orderHeader = _unitOfWork.orderHeaderRepository.Get(x => x.Id == id, includeProperties: "ApplicationUser");
-
             //update order status and payment status
             var service = new SessionService();
             Session session = service.Get(orderHeader.SessionId);
@@ -261,13 +260,14 @@ namespace MovieAppWeb.Areas.Customer.Controllers
                 _unitOfWork.orderHeaderRepository.UpdateStatus(id, OrderStatus.StatusApproved, OrderStatus.PaymentStatusApproved);
                 _unitOfWork.Save();
             }
-            HttpContext.Session.Clear();
 
             //remove shopping cart
             List<ShoppingCart> shoppingCarts = _unitOfWork.shoppingCartRepository.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
             _unitOfWork.shoppingCartRepository.RemoveRange(shoppingCarts);
             _unitOfWork.Save();
 
+            //clear session
+            HttpContext.Session.Clear();
             return View(id);
 
 
