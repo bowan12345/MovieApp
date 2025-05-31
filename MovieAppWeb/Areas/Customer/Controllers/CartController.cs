@@ -105,9 +105,14 @@ namespace MovieAppWeb.Areas.Customer.Controllers
             var cartFromListDb = _unitOfWork.shoppingCartRepository.GetAll(u => u.MovieId == movieId);
             _unitOfWork.shoppingCartRepository.RemoveRange(cartFromListDb);
             _unitOfWork.Save();
+
             //update shopping cart session
+            //get login user info
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            //get userId
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             HttpContext.Session.SetInt32(SessionConstants.SessionCart, _unitOfWork.shoppingCartRepository
-                                    .GetAll(u => u.ApplicationUserId == cartFromListDb.First().ApplicationUserId).Count());
+                                    .GetAll(u => u.ApplicationUserId == userId).GroupBy(x=>x.MovieId).Count());
             return RedirectToAction(nameof(Index));
         }
 
@@ -201,7 +206,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
                 _unitOfWork.Save();
             }
 
-            //customer
+            //customer  Azure domain :https://movieappweb20250531114550.azurewebsites.net/
             var domain = "https://localhost:7194/";
             var options = new SessionCreateOptions
             {
