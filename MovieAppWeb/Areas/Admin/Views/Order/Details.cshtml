@@ -1,7 +1,7 @@
 ﻿@using MovieApp.Models.ViewModels
 @using MovieApp.Utility
 @model OrderVM
-<form method="post">
+<form method="post"  asp-action="payNow">
     <input asp-for="OrderHeader.Id" hidden />
     <br />
     <div class="container">

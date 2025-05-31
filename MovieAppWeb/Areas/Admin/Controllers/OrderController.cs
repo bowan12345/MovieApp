@@ -6,6 +6,7 @@ using MovieApp.Models;
 using MovieApp.Utility;
 using Stripe;
 using System.Security.Claims;
+using Stripe.Checkout;
 
 namespace MovieAppWeb.Areas.Admin.Controllers
 {
@@ -68,6 +69,53 @@ namespace MovieAppWeb.Areas.Admin.Controllers
                 OrderDetails = _unitOfWork.orderDetailRepository.GetAll(u => u.OrderHeaderId == orderId, includeProperties: "Movie")
             };
             return View(OrderVM);
+        }
+
+        [HttpPost]
+        public IActionResult PayNow(OrderHeader orderHeader)
+        {
+            OrderVM = new()
+            {
+                OrderHeader = _unitOfWork.orderHeaderRepository.Get(u => u.Id == orderHeader.Id, includeProperties: "ApplicationUser"),
+                OrderDetails = _unitOfWork.orderDetailRepository.GetAll(u => u.OrderHeaderId == orderHeader.Id, includeProperties: "Movie")
+            };
+
+            //  Azure domain  
+            var domain = "https://localhost:7194/";
+            var options = new SessionCreateOptions
+            {
+                SuccessUrl = domain + $"Customer/Cart/Orderconfirmation?id={orderHeader.Id}",
+                CancelUrl = domain + $"Admin/Order/Details?orderId={orderHeader.Id}",
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+            };
+
+            foreach (var item in OrderVM.OrderDetails)
+            {
+                var sessionLineItem = new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = (long)(item.Price * 100), // $20.50 => 2050
+                        Currency = "nzd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = item.Movie.Name
+                        }
+                    },
+                    Quantity = item.Count
+                };
+                options.LineItems.Add(sessionLineItem);
+            }
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+            // update orderheader to database
+            _unitOfWork.orderHeaderRepository.UpdateStripePaymentIDById(orderHeader.Id, session.Id, session.PaymentIntentId);
+            _unitOfWork.Save();
+            Response.Headers.Add("Location", session.Url);
+
+            return new StatusCodeResult(303);
         }
 
 
