@@ -25,7 +25,7 @@ namespace BulkyWeb.ViewComponents
                 if (HttpContext.Session.GetInt32(SessionConstants.SessionCart) == null)
                 {
                     HttpContext.Session.SetInt32(SessionConstants.SessionCart,
-                    _unitOfWork.shoppingCartRepository.GetAll(u => u.ApplicationUserId == claim.Value).Count());
+                    _unitOfWork.shoppingCartRepository.GetAll(u => u.ApplicationUserId == claim.Value).GroupBy(x=>x.MovieId).Count());
                 }
                 return View(HttpContext.Session.GetInt32(SessionConstants.SessionCart));
 

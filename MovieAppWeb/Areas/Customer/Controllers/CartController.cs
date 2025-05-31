@@ -206,7 +206,7 @@ namespace MovieAppWeb.Areas.Customer.Controllers
                 _unitOfWork.Save();
             }
 
-            //customer  Azure domain :https://movieappweb20250531114550.azurewebsites.net/
+            //customer  Azure domain 
             var domain = "https://localhost:7194/";
             var options = new SessionCreateOptions
             {
