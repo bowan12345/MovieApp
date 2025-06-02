@@ -81,7 +81,8 @@ namespace MovieAppWeb.Areas.Admin.Controllers
             };
 
             //  Azure domain  
-            var domain = "https://localhost:7194/";
+            //var domain = "https://movieappweb20250531114550.azurewebsites.net/";
+            var domain = Request.Scheme + "://" + Request.Host.Value + "/";
             var options = new SessionCreateOptions
             {
                 SuccessUrl = domain + $"Customer/Cart/Orderconfirmation?id={orderHeader.Id}",
